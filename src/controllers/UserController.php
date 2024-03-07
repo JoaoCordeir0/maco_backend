@@ -1,11 +1,11 @@
 <?php 
 
-namespace App\Controllers;
+namespace MacoBackend\Controllers;
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use App\Middleware\Middleware;
-use App\Models\UserModel;
+use MacoBackend\Middleware\Middleware;
+use MacoBackend\Models\UserModel;
 
 final class UserController
 {
@@ -28,14 +28,16 @@ final class UserController
         }
                           
         $user = new UserModel();   
-        $user->where(['email', $email])->select();                
+        $user->where(['email', $email])
+             ->select();                
 
-        if ($user->result())
+        if (isset($user->result()->id))
         {           
             $response->getBody()->write(json_encode([
                 'status' => 'ok',                     
                 'message' => 'User login success',                   
                 'token' => Middleware::generateToken(),
+                'user' => $user->result(),                
             ]));                        
         }   
         else 

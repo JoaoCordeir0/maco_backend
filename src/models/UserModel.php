@@ -1,6 +1,6 @@
 <?php 
 
-namespace App\Models;
+namespace MacoBackend\Models;
 
 use SimpleDB\Opers;
 
@@ -8,7 +8,7 @@ class UserModel extends Opers {
     
     private $table = 'users';
     private $columns = [     
-        'nome:varchar(255):not null', 
+        'name:varchar(255):not null', 
         'email:varchar(255):not null',        
         'password:varchar(255):not null',
         'status:int:not null'

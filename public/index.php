@@ -57,7 +57,7 @@ $app->add(function ($request, $handler) {
 });
 
 // Define app routes
-require '../app/routes/Routes.php';
+require '../src/routes/Routes.php';
 
 // Run app
 $app->run();

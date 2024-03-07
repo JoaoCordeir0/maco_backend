@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Middleware;
+namespace MacoBackend\Middleware;
 
 use Exception;
 use DateTime;
