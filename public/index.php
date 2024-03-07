@@ -11,7 +11,7 @@ require __DIR__ . '/../vendor/autoload.php';
 /**
  * Load env file
  */
-(new DotenvUtil())->load(__DIR__ . '/../');
+DotenvUtil::load(__DIR__ . '/../');
 
 /**
  * Instantiate App

@@ -4,7 +4,7 @@ namespace MacoBackend\Utils;
 
 class DotenvUtil
 {
-   public function load($path): void
+   public static function load($path): void
    {
        $lines = file($path . '/.env');
        foreach ($lines as $line) {
