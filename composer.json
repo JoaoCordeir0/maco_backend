@@ -1,0 +1,19 @@
+{
+    "name": "backend/maco",
+    "type": "project",
+    "license": "MIT",
+    "authors": [{
+        "name": "joao.cordeiro",
+        "email": "joaocordeiro2134@gmail.com"
+    }],
+    "require": {
+        "slim/slim": "4.*",
+        "guzzlehttp/guzzle": "7.5",
+        "simpledb/simpledb": "dev-main"            
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/"
+        }
+    }
+}
