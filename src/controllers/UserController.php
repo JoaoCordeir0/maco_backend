@@ -27,10 +27,12 @@ final class UserController
             return $response;
         }
                           
-        $user = new UserModel();   
-        $user->where(['email', $email])
-             ->select();                
-
+        $user = new UserModel();    
+        $user->select(['id', 'name', 'email'])        
+             ->where("email = '{$email}'")
+             ->where("password = '{$password}'")             
+             ->get();  
+             
         if (isset($user->result()->id))
         {           
             $response->getBody()->write(json_encode([
