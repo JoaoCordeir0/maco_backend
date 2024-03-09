@@ -9,7 +9,8 @@
     "require": {
         "slim/slim": "4.*",
         "guzzlehttp/guzzle": "7.5",
-        "simpledb/simpledb": "dev-main"            
+        "simpledb/simpledb": "dev-main",
+        "phpmailer/phpmailer": "^6.9"            
     },
     "autoload": {
         "psr-4": {

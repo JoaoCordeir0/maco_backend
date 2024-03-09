@@ -16,5 +16,5 @@ $app->get('/', function (Request $request, Response $response) {
     return $response;
 });
 
-// Login 
-$app->post('/user/login', [UserController::class, 'login']);        
+$app->post('/user/login', [UserController::class, 'login']); // Login   
+$app->post('/user/recoverpassword', [UserController::class, 'recoverPassword']); // Recover password
