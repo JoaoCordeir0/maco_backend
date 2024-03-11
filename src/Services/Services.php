@@ -2,6 +2,7 @@
 
 namespace MacoBackend\Services;
 use PHPMailer\PHPMailer\PHPMailer;
+use \Firebase\JWT\JWT;
 use Exception;
 
 class Services
@@ -51,5 +52,10 @@ class Services
                 'message' => $e->getMessage(),
             ];
         }
+    }   
+    
+    public static function generateJWT($data): string
+    {
+        return JWT::encode($data, getenv('TOKEN_SECRET'));
     }    
 }

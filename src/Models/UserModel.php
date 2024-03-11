@@ -6,11 +6,14 @@ use SimpleDB\Opers;
 
 class UserModel extends Opers {
 
-    private $table = 'users';
+    private $table = 'user';
     private $columns = [     
         'name:varchar(255):not null', 
-        'email:varchar(255):not null',        
+        'cpf:varchar(30):not null',        
+        'email:varchar(255):not null',                
         'password:varchar(255):not null',
+        'ra:varchar(30):not null',
+        'lvl:int:not null',
         'status:int:not null'
     ];
 
@@ -18,9 +21,19 @@ class UserModel extends Opers {
         parent::__construct($this->table, $this->columns);
     }   
 
+    public function getID() 
+    {
+        return parent::result()->id;
+    }
+
     public function getName() 
     {
         return parent::result()->name;
+    }
+
+    public function getCpf() 
+    {
+        return parent::result()->cpf;
     }
 
     public function getEmail() 
@@ -31,6 +44,16 @@ class UserModel extends Opers {
     public function getPassword() 
     {
         return parent::result()->password;
+    }
+
+    public function getRA() 
+    {
+        return parent::result()->ra;
+    }
+
+    public function getLvl() 
+    {
+        return parent::result()->lvl;
     }
 
     public function getStatus() 

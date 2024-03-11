@@ -13,6 +13,7 @@ create table user(
     email varchar(255) not null unique,
     password varchar(255) not null,
     lvl int not null,
+    status bool not null,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     foreign key(lvl) REFERENCES user_lvl(id)    
 );

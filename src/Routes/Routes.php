@@ -16,5 +16,11 @@ $app->get('/', function (Request $request, Response $response) {
     return $response;
 });
 
+$app->get('/ping', function (Request $request, Response $response) {       
+    $response->getBody()->write(json_encode(['status' => 'ok']));     
+    return $response;
+});
+
 $app->post('/user/login', [UserController::class, 'login']); // Login   
+$app->post('/user/register', [UserController::class, 'register']); // Register   
 $app->post('/user/recoverpassword', [UserController::class, 'recoverPassword']); // Recover password

@@ -41,7 +41,7 @@ $app->addRoutingMiddleware();
  */
 $errorMiddleware = $app->addErrorMiddleware(true, true, true);
 
-// Errors
+// Api Errors
 $errorMiddleware->setDefaultErrorHandler(function (Request $request, Throwable $exception) use ($app) {
   $statusCode = 500;
   $response = new Response();
@@ -61,6 +61,12 @@ $app->add(function ($request, $handler) {
     ->withHeader('Content-Type', 'application/json')        
     ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
 });
+
+// Api Middleware
+$app->add(new Tuupola\Middleware\JwtAuthentication([  
+  'ignore' => ['/user/login', '/user/register', '/user/recoverpassword'],  
+  'secret' => getenv('TOKEN_SECRET')
+]));
 
 // Define app routes
 require '../src/routes/Routes.php';
