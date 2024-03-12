@@ -9,7 +9,7 @@ use MacoBackend\Models\CourseModel;
 final class CourseController
 {
     /**
-    * Realiza a listagem dos artigos
+    * Realiza a listagem dos cursos
     *    
     * @return Response
     */
