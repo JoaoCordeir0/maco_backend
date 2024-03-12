@@ -1,26 +1,24 @@
 <?php
 
-use Psr\Http\Message\ResponseInterface as Response;
-use Psr\Http\Message\ServerRequestInterface as Request;
-
+use MacoBackend\Controllers\ArticleController;
+use MacoBackend\Controllers\CourseController;
+use MacoBackend\Controllers\HomeController;
 use MacoBackend\Controllers\UserController;
 
 // Default route
-$app->get('/', function (Request $request, Response $response) {       
-    $response->getBody()->write(json_encode([
-        'Maco backend' => [
-            'Devs' => ['João Victor Cordeiro', 'Henrique Magnoli'],
-            'Date' => '03/07/2024'
-        ]
-    ]));     
-    return $response;
+$app->get('/', [HomeController::class, 'home']);
+$app->get('/ping', [HomeController::class, 'ping']);
+
+$app->group('/user', function () use ($app) {
+    $app->post('/user/login', [UserController::class, 'login']); // Login   
+    $app->post('/user/register', [UserController::class, 'register']); // Register   
+    $app->post('/user/recoverpassword', [UserController::class, 'recoverPassword']); // Recover password
 });
 
-$app->get('/ping', function (Request $request, Response $response) {       
-    $response->getBody()->write(json_encode(['status' => 'ok']));     
-    return $response;
+$app->group('/article', function () use ($app) {
+    $app->get('/article/list', [ArticleController::class, 'list']); // Article list        
 });
 
-$app->post('/user/login', [UserController::class, 'login']); // Login   
-$app->post('/user/register', [UserController::class, 'register']); // Register   
-$app->post('/user/recoverpassword', [UserController::class, 'recoverPassword']); // Recover password
+$app->group('/course', function () use ($app) {
+    $app->get('/course/list', [CourseController::class, 'list']); // Course list        
+});

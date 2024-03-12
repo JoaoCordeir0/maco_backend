@@ -7,6 +7,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use MacoBackend\Models\UserModel;
 use MacoBackend\Services\Services;
 use MacoBackend\Helpers\UserHelper;
+use MacoBackend\Models\RoleModel;
 
 final class UserController
 {
@@ -91,7 +92,7 @@ final class UserController
             'email' => $email,
             'password' => password_hash($password, PASSWORD_DEFAULT),
             'ra' => $ra,
-            'lvl' => 2,
+            'role' => RoleModel::AUTHOR,
             'status' => 1,
         ])->insert();         
 

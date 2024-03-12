@@ -30,10 +30,9 @@ class Services
             $mail->Password = getenv('EMAIL_PASSWORD');
 
             $mail->setFrom('maco@maco.com.br', 'Maco - UNIFAE');
+            
+            $mail->addAddress($address, $name);            
             // $mail->addReplyTo('', ''); -- Copia oculta
-
-            $mail->addAddress($address, $name);
-            $mail->AddBCC("notificacao@gn1.com.br", "Copia Oculta");    
 
             $mail->Subject = utf8_decode($title);            
             $mail->msgHTML(utf8_decode($html), __DIR__);            
