@@ -58,13 +58,21 @@ $app->add(function ($request, $handler) {
   $response = $handler->handle($request);
   return $response
     ->withHeader('Access-Control-Allow-Origin', '*')
+    ->withHeader('Access-Control-Allow-Headers', 'Authorization, Content-Type, Accept')
     ->withHeader('Content-Type', 'application/json')        
     ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
 });
 
+// Middleware para tratar solicitações OPTIONS
+$app->options('/{routes:.+}', function (Request $request, Response $response) {
+  return $response
+      ->withHeader('Allow', 'GET, POST, PUT, DELETE, OPTIONS')
+      ->withStatus(200);
+});
+
 // Api Middleware
 $app->add(new Tuupola\Middleware\JwtAuthentication([  
-  'ignore' => ['/user/login', '/user/register', '/user/recoverpassword'],  
+  'ignore' => ['/user/login', '/user/register', '/user/recoverpassword'],    
   'secret' => getenv('TOKEN_SECRET')
 ]));
 
