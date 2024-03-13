@@ -20,5 +20,6 @@ $app->group('/article', function () use ($app) {
 });
 
 $app->group('/course', function () use ($app) {
-    $app->get('/course/list', [CourseController::class, 'list']); // Course list        
+    $app->get('/course/list', [CourseController::class, 'list']); // Course list       
+    $app->post('/course/add', [CourseController::class, 'add']); // Course add        
 });

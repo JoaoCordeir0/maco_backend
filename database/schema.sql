@@ -23,7 +23,7 @@ create table user(
 
 create table course(
 	id int auto_increment primary key,
-    name varchar(255) not null,
+    name varchar(255) not null unique,
     description text,     
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP    
 );

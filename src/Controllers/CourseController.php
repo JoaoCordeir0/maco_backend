@@ -23,4 +23,45 @@ final class CourseController
 
         return $response;
     }  
+
+    /**
+    * Realiza a inserção de um curso
+    *    
+    * @return Response
+    */
+    public function add(Request $request, Response $response, $args): Response
+    {        
+        $parsedBody = $request->getParsedBody();
+
+        $name = $parsedBody['name'];
+        $description = $parsedBody['description'];             
+
+        if (empty($name) || empty($description))
+        {            
+            $response->getBody()->write(json_encode(['status' => 'error', 'message' => 'Missing information']));   
+            return $response;
+        }
+
+        $course = new CourseModel();
+        $course->data([
+            'name' => $name,
+            'description' => $description,
+        ])->insert();              
+        
+        if ($course->result()->status == 'success')
+        {
+            $response->getBody()->write(json_encode([
+                'status' => $course->result()->status,                     
+                'message' => 'Course inserted successfully',                                             
+            ])); 
+        }
+        else
+        {
+            $response->getBody()->write(json_encode([
+                'status' => 'error', 'message' => $course->result()->message
+            ]));  
+        }         
+        
+        return $response;
+    }  
 }
