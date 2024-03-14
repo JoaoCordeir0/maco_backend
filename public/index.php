@@ -77,7 +77,7 @@ $app->add(new Tuupola\Middleware\JwtAuthentication([
 ]));
 
 // Define app routes
-require '../src/routes/Routes.php';
+require '../src/Routes/Routes.php';
 
 // Run app
 $app->run();
