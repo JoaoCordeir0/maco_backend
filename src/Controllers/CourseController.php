@@ -64,4 +64,40 @@ final class CourseController
         
         return $response;
     }  
+
+    /**
+    * Realiza o delete de um curso
+    *    
+    * @return Response
+    */
+    public function del(Request $request, Response $response, $args): Response
+    {        
+        $idCourse = $args['id'];
+
+        if (empty($idCourse))
+        {            
+            $response->getBody()->write(json_encode(['status' => 'error', 'message' => 'Missing information']));   
+            return $response;
+        }
+
+        $course = new CourseModel();
+        $course->where("id = {$idCourse}")
+               ->delete();              
+        
+        if ($course->result()->status == 'success')
+        {
+            $response->getBody()->write(json_encode([
+                'status' => $course->result()->status,                     
+                'message' => 'Course deleted successfully',                                             
+            ])); 
+        }
+        else
+        {
+            $response->getBody()->write(json_encode([
+                'status' => 'error', 'message' => $course->result()->message
+            ]));  
+        }         
+        
+        return $response;
+    }  
 }
