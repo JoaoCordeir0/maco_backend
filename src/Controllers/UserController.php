@@ -36,16 +36,20 @@ final class UserController
              ->get();  
         
         if (isset($user->result()->id) && password_verify($password, $user->getPassword()))
-        {                       
+        {                   
+            $infoUser = array(
+                'id' => $user->getID(),
+                'name' => $user->getName(),
+                'email' => $user->getEmail(),
+                'ra' => $user->getRA(),    
+                'role' => $user->getRole(),               
+            );
+
             $response->getBody()->write(json_encode([
                 'status' => 'success',                     
                 'message' => 'User login success',                   
-                'token' => Services::generateJWT(array(
-                    'id' => $user->getID(),
-                    'name' => $user->getName(),
-                    'email' => $user->getEmail(),
-                    'ra' => $user->getRA(),                    
-                )),                            
+                'token' => Services::generateJWT($infoUser),   
+                'user' => $infoUser,                       
             ]));                        
         }   
         else 
