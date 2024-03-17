@@ -42,7 +42,7 @@ final class UserController
                 'name' => $user->getName(),
                 'email' => $user->getEmail(),
                 'ra' => $user->getRA(),    
-                'role' => $user->getRole(),               
+                'role' => UserHelper::formatUserRole($user->getRole()), 
             );
 
             $response->getBody()->write(json_encode([

@@ -25,6 +25,24 @@ final class CourseController
     }  
 
     /**
+    * Busca por um curso especifico
+    *    
+    * @return Response
+    */
+    public function details(Request $request, Response $response, $args): Response
+    {        
+        $id = $args['id'];
+        $course = new CourseModel();
+        $course->select()
+               ->where("id = {$id}")
+               ->get();              
+                
+        $response->getBody()->write(json_encode($course->result()));                                     
+
+        return $response;
+    }  
+
+    /**
     * Realiza a inserção de um curso
     *    
     * @return Response
