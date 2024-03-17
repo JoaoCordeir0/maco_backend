@@ -17,6 +17,7 @@ final class CourseController
     {        
         $course = new CourseModel();
         $course->select()
+               ->orderby()
                ->get();              
                 
         $response->getBody()->write(json_encode($course->result()));                                     
