@@ -14,11 +14,20 @@ final class CourseController
     * @return Response
     */
     public function list(Request $request, Response $response, $args): Response
-    {        
+    {   
+        $params = $request->getQueryParams();     
+        $condition = '';
+
         $course = new CourseModel();
+
+        if (isset($params['name'])) {            
+            $condition = "name like '%" . $params['name'] . "%'";
+        }
+
         $course->select()
+               ->where($condition)
                ->orderby()
-               ->get(true);              
+               ->get(true);
                 
         $response->getBody()->write(json_encode($course->result()));                                     
 
@@ -108,6 +117,47 @@ final class CourseController
             $response->getBody()->write(json_encode([
                 'status' => $course->result()->status,                     
                 'message' => 'Course deleted successfully',                                             
+            ])); 
+        }
+        else
+        {
+            $response->getBody()->write(json_encode([
+                'status' => 'error', 'message' => $course->result()->message
+            ]));  
+        }         
+        
+        return $response;
+    }  
+
+    /**
+    * Realiza a edição de um curso
+    *    
+    * @return Response
+    */
+    public function edit(Request $request, Response $response, $args): Response
+    {        
+        $parsedBody = $request->getParsedBody();
+
+        $id = $parsedBody['id'];
+        $name = $parsedBody['name'];
+        $description = $parsedBody['description'];             
+
+        if (empty($id) || empty($name) || empty($description))
+        {            
+            $response->getBody()->write(json_encode(['status' => 'error', 'message' => 'Missing information']));   
+            return $response;
+        }
+
+        $course = new CourseModel();
+        $course->data(['name' => $name, 'description' => $description])
+               ->where("id = {$id}")
+               ->update();              
+        
+        if ($course->result()->status == 'success')
+        {
+            $response->getBody()->write(json_encode([
+                'status' => $course->result()->status,                     
+                'message' => 'Course edited successfully',                                             
             ])); 
         }
         else

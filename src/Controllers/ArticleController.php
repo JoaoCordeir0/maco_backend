@@ -15,8 +15,24 @@ final class ArticleController
     */
     public function list(Request $request, Response $response, $args): Response
     {        
+        $params = (object) $request->getQueryParams();     
+        $condition = '';
+
         $article = new ArticleModel();
+
+        if (isset($params->title, $params->status)) {            
+            $condition = "title like '%" . $params->title . "%' and status = " . $params->status;
+        }               
+        else if (isset($params->title)) {            
+            $condition = "title like '%" . $params->title . "%'";
+        }
+        else if (isset($params->status)) {            
+            $condition = "status = " . $params->status;
+        }
+
         $article->select()
+                ->where($condition)
+                ->orderby()
                 ->get(true);              
                 
         $response->getBody()->write(json_encode($article->result()));                                     
