@@ -17,7 +17,7 @@ final class ArticleController
     {        
         $article = new ArticleModel();
         $article->select()
-                ->get();              
+                ->get(true);              
                 
         $response->getBody()->write(json_encode($article->result()));                                     
 
