@@ -53,6 +53,11 @@ class Services
         }
     }   
     
+    /**
+     * Função que gera um JWT com base em um array
+     * 
+     * @param $data
+     */
     public static function generateJWT($data): string
     {
         return JWT::encode($data, getenv('TOKEN_SECRET'));
