@@ -30,8 +30,11 @@ final class ArticleController
             $condition = "status = " . $params->status;
         }
 
-        $article->select()
-                ->where($condition)
+        $article->select(['article.*', 'course.name as course', 'user.name as user'])                
+                ->innerjoin('user_course on article.user = user_course.user')           
+                ->innerjoin('user on article.user = user.id')           
+                ->innerjoin('course on user_course.course = course.id')           
+                ->where($condition)     
                 ->orderby()
                 ->get(true);              
                 
@@ -49,14 +52,15 @@ final class ArticleController
     {        
         $parsedBody = $request->getParsedBody();
 
+        $user = $parsedBody['user'];
         $title = $parsedBody['title'];
-        $author = $parsedBody['author'];  
-        $advisor = $parsedBody['advisor'];             
+        $authors = $parsedBody['authors'];  
+        $advisors = $parsedBody['advisors'];             
         $keywords = $parsedBody['keywords'];  
         $summary = $parsedBody['summary'];
         $status = $parsedBody['status'];  
 
-        if (empty($title) || empty($author) || empty($advisor) || empty($keywords) || empty($summary) || empty($status))
+        if (empty($user) || empty($title) || empty($authors) || empty($advisors) || empty($keywords) || empty($summary) || empty($status))
         {            
             $response->getBody()->write(json_encode(['status' => 'error', 'message' => 'Missing information']));   
             return $response;
@@ -64,9 +68,10 @@ final class ArticleController
 
         $article = new ArticleModel();
         $article->data([
+            'user' => $user,
             'title' => $title,
-            'author' => $author,
-            'advisor' => $advisor,
+            'authors' => $authors,
+            'advisors' => $advisors,
             'keywords' => $keywords,
             'summary' => $summary,
             'status' => $status,

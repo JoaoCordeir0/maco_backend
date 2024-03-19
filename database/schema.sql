@@ -46,21 +46,14 @@ create table article_status(
 
 create table article(
 	id int auto_increment primary key,
+    user int not null,
     title varchar(255) not null,
-    author varchar(999) not null,
-    advisor varchar(999) not null,
+    authors varchar(999) not null,
+    advisors varchar(999) not null,
     keywords varchar(255) not null,
     summary text not null,
     status int not null, 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    foreign key(status) REFERENCES article_status(id)
-);
-
-create table user_article(
-	id int auto_increment primary key,
-    user int not null, 
-    article int not null,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    foreign key(user) REFERENCES user(id),
-    foreign key(article) REFERENCES article(id)    
+    foreign key(status) REFERENCES article_status(id),
+    foreign key(user) REFERENCES user(id)
 );

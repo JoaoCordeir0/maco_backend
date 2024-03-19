@@ -8,6 +8,7 @@ class ArticleModel extends Opers {
 
     private $table = 'article';
     private $columns = [     
+        'user:int:not null',    
         'title:varchar(255):not null', 
         'author:varchar(999):not null',        
         'advisor:varchar(999):not null',                
@@ -24,6 +25,11 @@ class ArticleModel extends Opers {
     {
         return parent::result()->id;
     }    
+
+    public function getUser() 
+    {
+        return parent::result()->user;
+    }   
 
     public function getTitle() 
     {
