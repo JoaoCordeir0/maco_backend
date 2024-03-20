@@ -163,4 +163,29 @@ final class UserController
     {                           
         return $response;
     } 
+
+    /**
+    * Realiza a listagem dos usuários
+    *    
+    * @return Response
+    */
+    public function list(Request $request, Response $response, $args): Response
+    {        
+        $params = (object) $request->getQueryParams();     
+
+        $condition = UserHelper::conditionByList($params);
+
+        $user = new UserModel();
+       
+        $user->select(['user.*', 'course.name as course'])                
+             ->innerjoin('user_course on user_course.user = user.id')                        
+             ->innerjoin('course on course.id = user_course.course')             
+             ->where($condition)     
+             ->orderby()
+             ->get(true);              
+                
+        $response->getBody()->write(json_encode($user->result()));                                     
+
+        return $response;
+    }  
 }

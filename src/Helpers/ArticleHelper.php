@@ -11,17 +11,23 @@ class ArticleHelper
      */
     public static function conditionByList(object $params): string
     {
-        if (isset($params->id)) {
-            return "article.id = " . $params->id;   
+        if (isset($params->article_id)) {
+            return "article.id = " . $params->article_id;   
         }
-        else if (isset($params->title, $params->status)) {            
-            return "title like '%" . $params->title . "%' and status = " . $params->status;
+        else if (isset($params->article_title, $params->article_status)) {            
+            return "article.title like '%" . $params->article_title . "%' and article.status = " . $params->article_status;
         }               
-        else if (isset($params->title)) {            
-            return "title like '%" . $params->title . "%'";
+        else if (isset($params->article_title)) {            
+            return "article.title like '%" . $params->article_title . "%'";
         }
-        else if (isset($params->status)) {            
-            return "status = " . $params->status;
+        else if (isset($params->article_status)) {            
+            return "article.status = " . $params->article_status;
+        }
+        else if (isset($params->course_id)) {            
+            return "course.id = " . $params->course_id;
+        }
+        else if (isset($params->course_name)) {        
+            return "course.name like '%" . $params->course_name . "%'";                
         }
         return '';       
     }    

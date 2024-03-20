@@ -50,4 +50,23 @@ class UserHelper
         }
         return base64_encode($role);
     }
+
+    /**
+     * Função que monta a condição where com base nos parametros passados na url
+     * 
+     * @param $params
+     */
+    public static function conditionByList(object $params): string
+    {
+        if (isset($params->user_id)) {
+            return "user.id = " . $params->user_id;   
+        }
+        else if (isset($params->course_id)) {            
+            return "course.id = " . $params->course_id;
+        }                      
+        else if (isset($params->course_name)) {            
+            return "course.name like '%" . $params->course_name . "%'";
+        }                      
+        return '';       
+    }    
 }
