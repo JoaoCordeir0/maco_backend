@@ -60,6 +60,11 @@ class Services
      */
     public static function generateJWT($data): string
     {
+        $data += [
+            'iat' => time(),
+            'exp' => time() + (60 * 240) // Expira em 5 horas
+        ]; 
+
         return JWT::encode($data, getenv('TOKEN_SECRET'));
     }    
 }
