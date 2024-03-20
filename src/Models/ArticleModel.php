@@ -36,14 +36,14 @@ class ArticleModel extends Opers {
         return parent::result()->title;
     }   
 
-    public function getAuthor() 
+    public function getAuthors() 
     {
-        return parent::result()->author;
+        return parent::result()->authors;
     }   
     
-    public function getAdvisor() 
+    public function getAdvisors() 
     {
-        return parent::result()->advisor;
+        return parent::result()->advisors;
     }   
     
     public function getKeywords() 
