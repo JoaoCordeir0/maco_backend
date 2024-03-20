@@ -2,6 +2,7 @@
 
 namespace MacoBackend\Controllers;
 
+use MacoBackend\Helpers\CourseHelper;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use MacoBackend\Models\CourseModel;
@@ -15,37 +16,16 @@ final class CourseController
     */
     public function list(Request $request, Response $response, $args): Response
     {   
-        $params = $request->getQueryParams();     
-        $condition = '';
+        $params = (object) $request->getQueryParams();     
+
+        $condition = CourseHelper::conditionByList($params);
 
         $course = new CourseModel();
-
-        if (isset($params['name'])) {            
-            $condition = "name like '%" . $params['name'] . "%'";
-        }
-
+        
         $course->select()
                ->where($condition)
                ->orderby()
                ->get(true);
-                
-        $response->getBody()->write(json_encode($course->result()));                                     
-
-        return $response;
-    }  
-
-    /**
-    * Busca por um curso especifico
-    *    
-    * @return Response
-    */
-    public function details(Request $request, Response $response, $args): Response
-    {        
-        $id = $args['id'];
-        $course = new CourseModel();
-        $course->select()
-               ->where("id = {$id}")
-               ->get();              
                 
         $response->getBody()->write(json_encode($course->result()));                                     
 
