@@ -17,7 +17,7 @@ final class HomeController
         $response->getBody()->write(json_encode([
             'Maco backend' => [
                 'Devs' => ['João Victor Cordeiro', 'Henrique Magnoli'],
-                'Date' => '03/07/2024'
+                'Date' => '03/03/2024'
             ]
         ]));     
 
