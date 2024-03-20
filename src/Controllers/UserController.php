@@ -8,6 +8,7 @@ use MacoBackend\Models\UserModel;
 use MacoBackend\Services\Services;
 use MacoBackend\Helpers\UserHelper;
 use MacoBackend\Models\RoleModel;
+use MacoBackend\Models\UserCourseModel;
 
 final class UserController
 {
@@ -75,9 +76,10 @@ final class UserController
         $cpf = $parsedBody['cpf'];
         $email = $parsedBody['email'];
         $password = $parsedBody['password'];           
-        $ra = $parsedBody['ra'];           
+        $ra = $parsedBody['ra'];        
+        $course = $parsedBody['course'];           
 
-        if (empty($name) || empty($cpf) || empty($email) || empty($password) || empty($ra))
+        if (empty($name) || empty($cpf) || empty($email) || empty($password) || empty($ra) || empty($course))
         {            
             $response->getBody()->write(json_encode(['status' => 'error', 'message' => 'Missing information']));   
             return $response;
@@ -100,7 +102,10 @@ final class UserController
             'status' => 1,
         ])->insert();         
 
-        if ($user->result()->status == 'success')
+        $user_course = new UserCourseModel();
+        $user_course->data(['user' => $user->result()->returnid, 'course' => $course])->insert(); 
+
+        if ($user->result()->status == 'success' && $user_course->result()->status == 'success')
         {
             $response->getBody()->write(json_encode([
                 'status' => $user->result()->status,                     
@@ -110,7 +115,7 @@ final class UserController
         else
         {
             $response->getBody()->write(json_encode([
-                'status' => 'error', 'message' => $user->result()->message
+                'status' => 'error', 'message' => $user->result()->message . $user_course->result()->message
             ]));  
         }             
 
