@@ -10,7 +10,7 @@ class DotenvUtil
    {
         try
         {
-            $lines = file($path . '/.env');
+            $lines = file($path . '.env');
             foreach ($lines as $line) {
                 if (stripos($line, '=') !== false) {
                     [$key, $value] = explode('=', $line, 2);
