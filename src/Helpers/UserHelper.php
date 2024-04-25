@@ -2,7 +2,10 @@
 
 namespace MacoBackend\Helpers;
 
+use \Firebase\JWT\JWT;
+use Psr\Http\Message\ServerRequestInterface as Request;
 use MacoBackend\Models\RoleModel;
+use MacoBackend\Models\UserModel;
 
 class UserHelper
 {    
@@ -69,4 +72,30 @@ class UserHelper
         }                      
         return '';       
     }    
+
+    /**
+     * Função que valida o nivel de usuário para determinada função
+     * 
+     * @param $request
+     * @param $role
+     */
+    public static function checkUserRole(Request $request, int $role): bool
+    {
+        $jwt = $request->getHeaderLine('Authorization');
+        $jwt = str_replace('Bearer', '', $jwt);
+        $jwt = str_replace(' ', '', $jwt);
+        
+        $user = JWT::decode($jwt, getenv('TOKEN_SECRET'), array_keys(JWT::$supported_algs));
+        $userID = $user->id;
+
+        $user = new UserModel();
+        $user->select(['role'])
+             ->where("id = {$userID}")
+             ->get();
+
+        if ($user->result()->role == $role) {
+            return false;
+        }
+        return true;        
+    }
 }

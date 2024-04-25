@@ -31,4 +31,18 @@ class ArticleHelper
         }
         return '';       
     }    
+
+    /**
+     * Função que monta a condição where com base nos parametros passados na url
+     * 
+     * @param $params
+     */
+    public static function conditionByListByAdvisor($courses): string
+    {
+        $where = '';
+        foreach($courses as $course) {
+            $where .= 'course.id = ' . $course['course']; 
+        }
+        return $where;       
+    }        
 }

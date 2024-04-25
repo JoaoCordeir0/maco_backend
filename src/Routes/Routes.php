@@ -17,7 +17,8 @@ $app->group('/user', function () use ($app) {
 });
 
 $app->group('/article', function () use ($app) {
-    $app->get('/article/list', [ArticleController::class, 'list']); // Article list      
+    $app->get('/article/list', [ArticleController::class, 'list']); // Article list  
+    $app->get('/article/list/advisor/{id}', [ArticleController::class, 'listByAdvisor']); // Article list      
     $app->post('/article/add', [ArticleController::class, 'add']); // Article add        
 });
 
