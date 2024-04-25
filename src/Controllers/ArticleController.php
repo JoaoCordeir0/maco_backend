@@ -19,17 +19,15 @@ final class ArticleController
     */
     public function listByAdmin(Request $request, Response $response, $args): Response
     {        
-        $params = (object) $request->getQueryParams();     
-
-        $condition = ArticleHelper::conditionByList($params);  
-
         if (UserHelper::checkUserRole($request, RoleModel::ADMIN)) {
-            $response->getBody()->write(json_encode([
-                'status' => 'error', 'message' => 'This user is not a admin'
-            ]));
+            $response->getBody()->write(json_encode(['status' => 'error', 'message' => 'This user is not a admin']));
             return $response;
         }
 
+        $params = (object) $request->getQueryParams();     
+
+        $condition = ArticleHelper::conditionByList($params);  
+       
         $article = new ArticleModel();       
         $article->select(['article.*', 'user.name as user', 'article_status.name as status', 'course.name as course'])                
                 ->innerjoin('user on article.user = user.id')           
@@ -50,16 +48,14 @@ final class ArticleController
     * @return Response
     */
     public function listByAdvisor(Request $request, Response $response, $args): Response
-    {        
-        $advisor_id = $args['id'];
- 
+    {                   
         if (UserHelper::checkUserRole($request, RoleModel::ADVISOR)) {
-            $response->getBody()->write(json_encode([
-                'status' => 'error', 'message' => 'This user is not a advisor'
-            ]));
+            $response->getBody()->write(json_encode(['status' => 'error', 'message' => 'This user is not a advisor']));
             return $response;
         }
 
+        $advisor_id = $args['id'];
+        
         $params = (object) $request->getQueryParams();   
         
         $condition = ArticleHelper::conditionByListByAdvisor($params);

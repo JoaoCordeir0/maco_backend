@@ -192,5 +192,5 @@ final class UserController
         $response->getBody()->write(json_encode($user->result()));                                     
 
         return $response;
-    }  
+    }     
 }
