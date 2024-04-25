@@ -17,7 +17,7 @@ final class ArticleController
     *    
     * @return Response
     */
-    public function list(Request $request, Response $response, $args): Response
+    public function listByAdmin(Request $request, Response $response, $args): Response
     {        
         $params = (object) $request->getQueryParams();     
 
@@ -60,12 +60,16 @@ final class ArticleController
             return $response;
         }
 
+        $params = (object) $request->getQueryParams();   
+        
+        $condition = ArticleHelper::conditionByListByAdvisor($params);
+
         $article = new ArticleModel();
         $article->select(['article.*', 'user.name as user', 'article_status.name as status', 'course.name as course'])                                
                 ->innerjoin('user on article.user = user.id')           
                 ->innerjoin('course on article.course = course.id')
                 ->innerjoin('article_status on article.status = article_status.id')           
-                ->where("course.id in (select course from user_course where user = {$advisor_id})")     
+                ->where("course.id in (select course from user_course where user = {$advisor_id})" . $condition)     
                 ->orderby()
                 ->get(true);              
                 

@@ -37,12 +37,11 @@ class ArticleHelper
      * 
      * @param $params
      */
-    public static function conditionByListByAdvisor($courses): string
+    public static function conditionByListByAdvisor(object $params): string
     {
-        $where = '';
-        foreach($courses as $course) {
-            $where .= 'course.id = ' . $course['course']; 
+        if (isset($params->article_id)) {
+            return "and article.id = " . $params->article_id;   
         }
-        return $where;       
+        return '';       
     }        
 }
