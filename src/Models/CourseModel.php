@@ -10,6 +10,7 @@ class CourseModel extends Opers {
     private $columns = [     
         'name:varchar(255):not null', 
         'description:text:',        
+        'image:varchar(455):', 
     ];
 
     public function __construct() {        
