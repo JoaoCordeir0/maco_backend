@@ -29,7 +29,7 @@ final class ArticleController
         $condition = ArticleHelper::conditionByList($params);  
        
         $article = new ArticleModel();       
-        $article->select(['article.*', 'user.name as user', 'article_status.name as status', 'course.name as course'])                
+        $article->select(['article.*', 'user.name as author', 'article_status.name as status', 'course.name as course'])                
                 ->innerjoin('user on article.user = user.id')           
                 ->innerjoin('course on article.course = course.id')
                 ->innerjoin('article_status on article.status = article_status.id')         
@@ -61,11 +61,11 @@ final class ArticleController
         $condition = ArticleHelper::conditionByListByAdvisor($params);
 
         $article = new ArticleModel();
-        $article->select(['article.*', 'user.name as user', 'article_status.name as status', 'course.name as course'])                                
+        $article->select(['article.*', 'user.name as author', 'article_status.name as status', 'course.name as course'])                                
                 ->innerjoin('user on article.user = user.id')           
                 ->innerjoin('course on article.course = course.id')
                 ->innerjoin('article_status on article.status = article_status.id')           
-                ->where("course.id in (select course from user_course where user = {$advisor_id})" . $condition)     
+                ->where("article.status = 2 and course.id in (select course from user_course where user = {$advisor_id})" . $condition)     
                 ->orderby()
                 ->get(true);              
                 
