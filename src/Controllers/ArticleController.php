@@ -128,4 +128,42 @@ final class ArticleController
         
         return $response;
     } 
+
+    /**
+    * Realiza a edição do status do artigo
+    *    
+    * @return Response
+    */
+    public function status(Request $request, Response $response, $args): Response
+    {        
+        $parsedBody = $request->getParsedBody();
+
+        $id = $parsedBody['id'];
+        $status = $parsedBody['status'];        
+
+        if (empty($id) || empty($status))
+        {            
+            $response->getBody()->write(json_encode(['status' => 'error', 'message' => 'Missing information']));   
+            return $response;
+        }
+
+        $article = new ArticleModel();
+        $article->data(['status' => $status])
+                ->where("id = {$id}")
+                ->update();              
+                
+        if ($article->result()->status != 'success') {
+            $response->getBody()->write(json_encode([
+                'status' => 'error', 'message' => $article->result()->message
+            ]));
+            return $response;                        
+        }
+
+        $response->getBody()->write(json_encode([
+            'status' => $article->result()->status,                     
+            'message' => 'Article status update successfully',                                             
+        ]));        
+        
+        return $response;            
+    }
 }

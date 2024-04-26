@@ -20,6 +20,7 @@ $app->group('/article', function () use ($app) {
     $app->get('/article/list', [ArticleController::class, 'listByAdmin']); // Article list  
     $app->get('/article/list/advisor/{id}', [ArticleController::class, 'listByAdvisor']); // Article list      
     $app->post('/article/add', [ArticleController::class, 'add']); // Article add        
+    $app->post('/article/status', [ArticleController::class, 'status']); // Article update status        
 });
 
 $app->group('/course', function () use ($app) {
