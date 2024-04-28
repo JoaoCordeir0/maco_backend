@@ -74,7 +74,7 @@ final class ArticleController
     }      
 
     /**
-    * Realiza a listagem dos artigos de um revisor
+    * Realiza a listagem dos artigos de um author
     *    
     * @return Response
     */
