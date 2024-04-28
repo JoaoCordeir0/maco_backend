@@ -25,9 +25,9 @@ $app->group('/article', function () use ($app) {
 });
 
 $app->group('/course', function () use ($app) {
-    $app->get('/course/list', [CourseController::class, 'list']); // Course list           
+    $app->get('/course/list', [CourseController::class, 'listCourses']); // Course list           
     $app->get('/course/list/user/{id}', [CourseController::class, 'listByUser']); // Course list by user      
-    $app->post('/course/add', [CourseController::class, 'add']); // Course add
-    $app->post('/course/edit', [CourseController::class, 'edit']); // Course edit
-    $app->delete('/course/del/{id}', [CourseController::class, 'del']); // Course del        
+    $app->post('/course/add', [CourseController::class, 'addCourse']); // Course add
+    $app->post('/course/edit', [CourseController::class, 'editCourse']); // Course edit
+    $app->delete('/course/del/{id}', [CourseController::class, 'delCourse']); // Course del        
 });

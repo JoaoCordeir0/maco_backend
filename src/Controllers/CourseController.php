@@ -17,7 +17,7 @@ final class CourseController
     *    
     * @return Response
     */
-    public function list(Request $request, Response $response, $args): Response
+    public function listCourse(Request $request, Response $response, $args): Response
     {     
         $params = (object) $request->getQueryParams();     
 
@@ -56,7 +56,7 @@ final class CourseController
     *    
     * @return Response
     */
-    public function add(Request $request, Response $response, $args): Response
+    public function addCourse(Request $request, Response $response, $args): Response
     {        
         if (UserHelper::checkUserRole($request, RoleModel::ADMIN)) {            
             return ResponseController::message($response, 'error', 'This user is not a admin');
@@ -88,7 +88,7 @@ final class CourseController
     *    
     * @return Response
     */
-    public function del(Request $request, Response $response, $args): Response
+    public function delCourse(Request $request, Response $response, $args): Response
     {        
         if (UserHelper::checkUserRole($request, RoleModel::ADMIN)) {
             return ResponseController::message($response, 'error', 'This user is not a admin');
@@ -115,7 +115,7 @@ final class CourseController
     *    
     * @return Response
     */
-    public function edit(Request $request, Response $response, $args): Response
+    public function editCourse(Request $request, Response $response, $args): Response
     {        
         if (UserHelper::checkUserRole($request, RoleModel::ADMIN)) {
             $response->getBody()->write(json_encode(['status' => 'error', 'message' => 'This user is not a admin']));
