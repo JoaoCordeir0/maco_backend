@@ -24,10 +24,8 @@ final class UserController
         $email = $parsedBody['email'];
         $password = $parsedBody['password'];                    
 
-        if (empty($email) || empty($password))
-        {            
-            $response->getBody()->write(json_encode(['status' => 'error', 'message' => 'Empty email or password']));   
-            return $response;
+        if (empty($email) || empty($password)) {                        
+            return ResponseController::message($response, 'error', 'Empty email or password');         
         }
 
         $user = new UserModel();    
@@ -45,22 +43,17 @@ final class UserController
                 'ra' => $user->getRA(),    
                 'role' => UserHelper::formatUserRole($user->getRole()), 
             );
-
-            $response->getBody()->write(json_encode([
+            
+            $data = (object) [
                 'status' => 'success',                     
                 'message' => 'User login success',                   
-                'token' => Services::generateJWT($infoUser),   
+                'token' => UserHelper::generateJWT($infoUser),   
                 'user' => $infoUser,                       
-            ]));                        
-        }   
-        else 
-        {
-            $response->getBody()->write(json_encode([
-                'status' => 'error', 'message' => 'Incorrect email or password'
-            ]));                        
-        }     
+            ];            
 
-        return $response;
+            return ResponseController::data($response, $data);                         
+        }   
+        return ResponseController::message($response, 'error', 'Incorrect email or password');                   
     }  
 
     /**
@@ -79,16 +72,12 @@ final class UserController
         $ra = $parsedBody['ra'];        
         $course = $parsedBody['course'];           
 
-        if (empty($name) || empty($cpf) || empty($email) || empty($password) || empty($ra) || empty($course))
-        {            
-            $response->getBody()->write(json_encode(['status' => 'error', 'message' => 'Missing information']));   
-            return $response;
+        if (empty($name) || empty($cpf) || empty($email) || empty($password) || empty($ra) || empty($course)) {                        
+            return ResponseController::message($response, 'error', 'Missing information');         
         }
 
-        if (! UserHelper::validateEmail($email))
-        {            
-            $response->getBody()->write(json_encode(['status' => 'error', 'message' => 'Invalid email']));   
-            return $response;
+        if (! UserHelper::validateEmail($email)) {                         
+            return ResponseController::message($response, 'error', 'Invalid email');                     
         }
 
         $user = new UserModel();    
@@ -105,21 +94,10 @@ final class UserController
         $user_course = new UserCourseModel();
         $user_course->data(['user' => $user->result()->returnid, 'course' => $course])->insert(); 
 
-        if ($user->result()->status == 'success' && $user_course->result()->status == 'success')
-        {
-            $response->getBody()->write(json_encode([
-                'status' => $user->result()->status,                     
-                'message' => 'Registration completed successfully',                                             
-            ])); 
-        }
-        else
-        {
-            $response->getBody()->write(json_encode([
-                'status' => 'error', 'message' => $user->result()->message . $user_course->result()->message
-            ]));  
-        }             
-
-        return $response;
+        if ($user->result()->status == 'success' && $user_course->result()->status == 'success') {            
+            return ResponseController::message($response, $user->result()->status, 'Registration completed successfully');         
+        }        
+        return ResponseController::message($response, 'error', $user->result()->message . $user_course->result()->message);                     
     }     
 
     /**
@@ -133,10 +111,8 @@ final class UserController
 
         $email = $parsedBody['email'];        
 
-        if (empty($email))
-        {            
-            $response->getBody()->write(json_encode(['status' => 'error', 'message' => 'Empty email']));   
-            return $response;
+        if (empty($email)) {            
+            return ResponseController::message($response, 'error', 'Empty email');                
         }
 
         $user = new UserModel();    
@@ -151,12 +127,7 @@ final class UserController
             Services::sendMail('title email', 'html email', $user->getEmail(), $user->getName());           
         }  
 
-        $response->getBody()->write(json_encode([
-            'status' => 'success',                     
-            'message' => 'Email sent to ' . $email,                        
-        ]));          
-
-        return $response;
+        return ResponseController::message($response, 'success', 'Email sent to ' . $email);          
     } 
 
     /**
@@ -174,8 +145,12 @@ final class UserController
     *    
     * @return Response
     */
-    public function list(Request $request, Response $response, $args): Response
+    public function listUsers(Request $request, Response $response, $args): Response
     {        
+        if (UserHelper::checkUserRole($request, RoleModel::ADMIN)) {            
+            return ResponseController::message($response, 'error', 'This user is not admin'); 
+        }
+        
         $params = (object) $request->getQueryParams();     
 
         $condition = UserHelper::conditionByList($params);
@@ -189,8 +164,6 @@ final class UserController
              ->orderby()
              ->get(true);              
                 
-        $response->getBody()->write(json_encode($user->result()));                                     
-
-        return $response;
+        return ResponseController::data($response, $user->result());
     }     
 }

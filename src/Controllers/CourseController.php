@@ -9,7 +9,6 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use MacoBackend\Models\CourseModel;
 use MacoBackend\Models\RoleModel;
 use MacoBackend\Models\UserCourseModel;
-use MacoBackend\Models\UserModel;
 
 final class CourseController
 {
@@ -31,9 +30,7 @@ final class CourseController
                ->orderby()
                ->get(true);
                 
-        $response->getBody()->write(json_encode($course->result()));                                     
-
-        return $response;
+        return ResponseController::data($response, $course->result());        
     }  
 
     /**
@@ -50,10 +47,8 @@ final class CourseController
                     ->innerjoin('course on user_course.course = course.id')                    
                     ->where("user_course.user = {$userID}")                             
                     ->get(true);              
-                
-        $response->getBody()->write(json_encode($userCourses->result()));                                     
-
-        return $response;
+                        
+        return ResponseController::data($response, $userCourses->result());
     }   
 
     /**
@@ -63,9 +58,8 @@ final class CourseController
     */
     public function add(Request $request, Response $response, $args): Response
     {        
-        if (UserHelper::checkUserRole($request, RoleModel::ADMIN)) {
-            $response->getBody()->write(json_encode(['status' => 'error', 'message' => 'This user is not a admin']));
-            return $response;
+        if (UserHelper::checkUserRole($request, RoleModel::ADMIN)) {            
+            return ResponseController::message($response, 'error', 'This user is not a admin');
         }
 
         $parsedBody = $request->getParsedBody();
@@ -73,10 +67,8 @@ final class CourseController
         $name = $parsedBody['name'];
         $description = $parsedBody['description'];             
 
-        if (empty($name) || empty($description))
-        {            
-            $response->getBody()->write(json_encode(['status' => 'error', 'message' => 'Missing information']));   
-            return $response;
+        if (empty($name) || empty($description)) {            
+            return ResponseController::message($response, 'error', 'Missing information');         
         }
 
         $course = new CourseModel();
@@ -85,21 +77,10 @@ final class CourseController
             'description' => $description,
         ])->insert();              
         
-        if ($course->result()->status == 'success')
-        {
-            $response->getBody()->write(json_encode([
-                'status' => $course->result()->status,                     
-                'message' => 'Course inserted successfully',                                             
-            ])); 
+        if ($course->result()->status != 'success') {    
+            return ResponseController::message($response, 'error', $course->result()->message);         
         }
-        else
-        {
-            $response->getBody()->write(json_encode([
-                'status' => 'error', 'message' => $course->result()->message
-            ]));  
-        }         
-        
-        return $response;
+        return ResponseController::message($response, $course->result()->status, 'Course inserted successfully');         
     }  
 
     /**
@@ -110,37 +91,23 @@ final class CourseController
     public function del(Request $request, Response $response, $args): Response
     {        
         if (UserHelper::checkUserRole($request, RoleModel::ADMIN)) {
-            $response->getBody()->write(json_encode(['status' => 'error', 'message' => 'This user is not a admin']));
-            return $response;
+            return ResponseController::message($response, 'error', 'This user is not a admin');
         }
 
         $idCourse = $args['id'];
 
-        if (empty($idCourse))
-        {            
-            $response->getBody()->write(json_encode(['status' => 'error', 'message' => 'Missing information']));   
-            return $response;
+        if (empty($idCourse)) {            
+            return ResponseController::message($response, 'error', 'Missing information');         
         }
 
         $course = new CourseModel();
         $course->where("id = {$idCourse}")
                ->delete();              
         
-        if ($course->result()->status == 'success')
-        {
-            $response->getBody()->write(json_encode([
-                'status' => $course->result()->status,                     
-                'message' => 'Course deleted successfully',                                             
-            ])); 
+        if ($course->result()->status != 'success') {    
+            return ResponseController::message($response, 'error', $course->result()->message);         
         }
-        else
-        {
-            $response->getBody()->write(json_encode([
-                'status' => 'error', 'message' => $course->result()->message
-            ]));  
-        }         
-        
-        return $response;
+        return ResponseController::message($response, $course->result()->status, 'Course deleted successfully');       
     }  
 
     /**
@@ -170,22 +137,11 @@ final class CourseController
         $course = new CourseModel();
         $course->data(['name' => $name, 'description' => $description])
                ->where("id = {$id}")
-               ->update();              
-        
-        if ($course->result()->status == 'success')
-        {
-            $response->getBody()->write(json_encode([
-                'status' => $course->result()->status,                     
-                'message' => 'Course edited successfully',                                             
-            ])); 
+               ->update();                    
+
+        if ($course->result()->status != 'success') {    
+            return ResponseController::message($response, 'error', $course->result()->message);         
         }
-        else
-        {
-            $response->getBody()->write(json_encode([
-                'status' => 'error', 'message' => $course->result()->message
-            ]));  
-        }         
-        
-        return $response;
+        return ResponseController::message($response, $course->result()->status, 'Course edited successfully');   
     }  
 }

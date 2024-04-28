@@ -19,8 +19,9 @@ $app->group('/user', function () use ($app) {
 $app->group('/article', function () use ($app) {
     $app->get('/article/list', [ArticleController::class, 'listByAdmin']); // Article list  
     $app->get('/article/list/advisor/{id}', [ArticleController::class, 'listByAdvisor']); // Article list      
-    $app->post('/article/add', [ArticleController::class, 'add']); // Article add        
-    $app->post('/article/status', [ArticleController::class, 'status']); // Article update status        
+    $app->post('/article/add', [ArticleController::class, 'addArticle']); // Article add        
+    $app->post('/article/status', [ArticleController::class, 'updateStatus']); // Article update status        
+    $app->post('/article/comment', [ArticleController::class, 'addComment']); // Article add comment        
 });
 
 $app->group('/course', function () use ($app) {

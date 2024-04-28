@@ -74,6 +74,21 @@ class UserHelper
     }    
 
     /**
+     * Função que gera um JWT com base em um array
+     * 
+     * @param $data
+     */
+    public static function generateJWT($data): string
+    {
+        $data += [
+            'iat' => time(),
+            'exp' => time() + (60 * 240) // Expira em 5 horas
+        ]; 
+
+        return JWT::encode($data, getenv('TOKEN_SECRET'));
+    }   
+    
+    /**
      * Função que valida o nivel de usuário para determinada função
      * 
      * @param $request

@@ -4,14 +4,14 @@ use Slim\Factory\AppFactory;
 
 use Psr\Http\Message\ServerRequestInterface as Request;
 use GuzzleHttp\Psr7\Response;
-use MacoBackend\Utils\DotenvUtil;
+use MacoBackend\Helpers\DotenvHelper;
 
 require __DIR__ . '/../vendor/autoload.php';
 
 /**
  * Load env file
  */
-DotenvUtil::load(__DIR__ . '/../');
+DotenvHelper::load(__DIR__ . '/../');
 
 /**
  * Instantiate App

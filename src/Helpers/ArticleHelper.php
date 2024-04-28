@@ -43,5 +43,5 @@ class ArticleHelper
             return "and article.id = " . $params->article_id;   
         }
         return '';       
-    }        
+    }          
 }

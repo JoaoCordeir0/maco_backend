@@ -4,6 +4,7 @@ namespace MacoBackend\Controllers;
 
 use MacoBackend\Helpers\ArticleHelper;
 use MacoBackend\Helpers\UserHelper;
+use MacoBackend\Models\ArticleCommentsModel;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use MacoBackend\Models\ArticleModel;
@@ -19,9 +20,8 @@ final class ArticleController
     */
     public function listByAdmin(Request $request, Response $response, $args): Response
     {        
-        if (UserHelper::checkUserRole($request, RoleModel::ADMIN)) {
-            $response->getBody()->write(json_encode(['status' => 'error', 'message' => 'This user is not a admin']));
-            return $response;
+        if (UserHelper::checkUserRole($request, RoleModel::ADMIN)) {            
+            return ResponseController::message($response, 'error', 'This user is not a admin');            
         }
 
         $params = (object) $request->getQueryParams();     
@@ -37,9 +37,7 @@ final class ArticleController
                 ->orderby()
                 ->get(true);              
                 
-        $response->getBody()->write(json_encode($article->result()));                                     
-
-        return $response;
+        return ResponseController::data($response, $article->result());
     }  
 
     /**
@@ -49,9 +47,8 @@ final class ArticleController
     */
     public function listByAdvisor(Request $request, Response $response, $args): Response
     {                   
-        if (UserHelper::checkUserRole($request, RoleModel::ADVISOR)) {
-            $response->getBody()->write(json_encode(['status' => 'error', 'message' => 'This user is not a advisor']));
-            return $response;
+        if (UserHelper::checkUserRole($request, RoleModel::ADVISOR)) {            
+            return ResponseController::message($response, 'error', 'This user is not a advisor');            
         }
 
         $advisor_id = $args['id'];
@@ -68,10 +65,8 @@ final class ArticleController
                 ->where("article.status = 2 and course.id in (select course from user_course where user = {$advisor_id})" . $condition)     
                 ->orderby()
                 ->get(true);              
-                
-        $response->getBody()->write(json_encode($article->result()));                                     
 
-        return $response;
+        return ResponseController::data($response, $article->result());
     }      
 
     /**
@@ -79,7 +74,7 @@ final class ArticleController
     *    
     * @return Response
     */
-    public function add(Request $request, Response $response, $args): Response
+    public function addArticle(Request $request, Response $response, $args): Response
     {        
         $parsedBody = $request->getParsedBody();
 
@@ -91,8 +86,7 @@ final class ArticleController
         $summary = $parsedBody['summary'];        
 
         if (empty($user) || empty($title) || empty($authors) || empty($advisors) || empty($keywords) || empty($summary)) {            
-            $response->getBody()->write(json_encode(['status' => 'error', 'message' => 'Missing information']));   
-            return $response;
+            return ResponseController::message($response, 'error', 'Missing information');            
         }
 
         $userCourse = new UserCourseModel();
@@ -114,19 +108,10 @@ final class ArticleController
             'status' => 1, // Status recebido
         ])->insert();              
         
-        if ($article->result()->status != 'success') {
-            $response->getBody()->write(json_encode([
-                'status' => 'error', 'message' => $article->result()->message
-            ]));
-            return $response;                        
+        if ($article->result()->status != 'success') {                            
+            return ResponseController::message($response, 'error', $article->result()->message);
         }
-
-        $response->getBody()->write(json_encode([
-            'status' => $article->result()->status,                     
-            'message' => 'Article inserted successfully',                                             
-        ]));        
-        
-        return $response;
+        return ResponseController::message($response, $article->result()->status, 'Article inserted successfully');     
     } 
 
     /**
@@ -134,36 +119,55 @@ final class ArticleController
     *    
     * @return Response
     */
-    public function status(Request $request, Response $response, $args): Response
+    public function updateStatus(Request $request, Response $response, $args): Response
     {        
         $parsedBody = $request->getParsedBody();
 
         $id = $parsedBody['id'];
         $status = $parsedBody['status'];        
 
-        if (empty($id) || empty($status))
-        {            
-            $response->getBody()->write(json_encode(['status' => 'error', 'message' => 'Missing information']));   
-            return $response;
+        if (empty($id) || empty($status)) {            
+            return ResponseController::message($response, 'error', 'Missing information');            
         }
 
-        $article = new ArticleModel();
-        $article->data(['status' => $status])
+        $articleStatus = new ArticleModel();
+        $articleStatus->data(['status' => $status])
                 ->where("id = {$id}")
                 ->update();              
                 
-        if ($article->result()->status != 'success') {
-            $response->getBody()->write(json_encode([
-                'status' => 'error', 'message' => $article->result()->message
-            ]));
-            return $response;                        
+        if ($articleStatus->result()->status != 'success') {            
+            return ResponseController::message($response, 'error', $articleStatus->result()->message);                                   
+        }
+        return ResponseController::message($response, $articleStatus->result()->status, 'Article status update successfully');
+    }
+
+    /**
+    * Realiza a inserção de um comentário de revisão no artigo
+    *    
+    * @return Response
+    */
+    public function addComment(Request $request, Response $response, $args): Response
+    {        
+        $parsedBody = $request->getParsedBody();
+
+        $user = $parsedBody['user'];
+        $article = $parsedBody['article'];
+        $comment = $parsedBody['comment'];          
+
+        if (empty($user) || empty($article) || empty($comment)) {                        
+            return ResponseController::message($response, 'error', 'Missing information');            
         }
 
-        $response->getBody()->write(json_encode([
-            'status' => $article->result()->status,                     
-            'message' => 'Article status update successfully',                                             
-        ]));        
+        $articleComment = new ArticleCommentsModel();
+        $articleComment->data([
+            'user' => $user,
+            'article' => $article,
+            'comment' => $comment,           
+        ])->insert();            
         
-        return $response;            
-    }
+        if ($articleComment->result()->status != 'success') {            
+            return ResponseController::message($response, 'error', $articleComment->result()->debug);                        
+        }           
+        return ResponseController::message($response, $articleComment->result()->status, 'Article comment inserted successfully');
+    } 
 }

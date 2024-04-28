@@ -1,10 +1,10 @@
 <?php
 
-namespace MacoBackend\Utils;
+namespace MacoBackend\Helpers;
 
 use Exception;
 
-class DotenvUtil
+class DotenvHelper
 {
    public static function load($path): void
    {
