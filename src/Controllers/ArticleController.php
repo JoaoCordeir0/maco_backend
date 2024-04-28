@@ -37,7 +37,9 @@ final class ArticleController
                 ->orderby()
                 ->get(true);              
                 
-        return ResponseController::data($response, $article->result());
+        $data = ArticleHelper::joinArticleComments($article->result());
+
+        return ResponseController::data($response, $data);
     }  
 
     /**
@@ -51,22 +53,55 @@ final class ArticleController
             return ResponseController::message($response, 'error', 'This user is not a advisor');            
         }
 
-        $advisor_id = $args['id'];
+        $advisorID = $args['id'];
         
         $params = (object) $request->getQueryParams();   
         
-        $condition = ArticleHelper::conditionByListByAdvisor($params);
+        $condition = ArticleHelper::conditionByListByAdvisorAndAuthor($params);
 
         $article = new ArticleModel();
         $article->select(['article.*', 'user.name as author', 'article_status.name as status', 'course.name as course'])                                
                 ->innerjoin('user on article.user = user.id')           
                 ->innerjoin('course on article.course = course.id')
                 ->innerjoin('article_status on article.status = article_status.id')           
-                ->where("article.status = 2 and course.id in (select course from user_course where user = {$advisor_id})" . $condition)     
+                ->where("article.status = 2 and course.id in (select course from user_course where user = {$advisorID})" . $condition)     
                 ->orderby()
                 ->get(true);              
 
-        return ResponseController::data($response, $article->result());
+        $data = ArticleHelper::joinArticleComments($article->result());
+
+        return ResponseController::data($response, $data);
+    }      
+
+    /**
+    * Realiza a listagem dos artigos de um revisor
+    *    
+    * @return Response
+    */
+    public function listByAuthor(Request $request, Response $response, $args): Response
+    {                   
+        if (UserHelper::checkUserRole($request, RoleModel::AUTHOR)) {            
+            return ResponseController::message($response, 'error', 'This user is not a author');            
+        }
+
+        $authorID = $args['id'];
+        
+        $params = (object) $request->getQueryParams();   
+        
+        $condition = ArticleHelper::conditionByListByAdvisorAndAuthor($params);
+
+        $article = new ArticleModel();
+        $article->select(['article.*', 'user.name as author', 'article_status.name as status', 'course.name as course'])                                
+                ->innerjoin('user on article.user = user.id')           
+                ->innerjoin('course on article.course = course.id')
+                ->innerjoin('article_status on article.status = article_status.id')           
+                ->where("(article.status = 1 or article.status = 3) and article.user = {$authorID} " . $condition)     
+                ->orderby()
+                ->get(true);              
+        
+        $data = ArticleHelper::joinArticleComments($article->result());
+        
+        return ResponseController::data($response, $data);
     }      
 
     /**

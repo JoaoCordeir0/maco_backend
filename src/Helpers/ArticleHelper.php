@@ -2,6 +2,8 @@
 
 namespace MacoBackend\Helpers;
 
+use MacoBackend\Models\ArticleCommentsModel;
+
 class ArticleHelper
 {    
     /**
@@ -37,11 +39,33 @@ class ArticleHelper
      * 
      * @param $params
      */
-    public static function conditionByListByAdvisor(object $params): string
+    public static function conditionByListByAdvisorAndAuthor(object $params): string
     {
         if (isset($params->article_id)) {
             return "and article.id = " . $params->article_id;   
         }
         return '';       
-    }          
+    }     
+
+    /**
+     * Função que junta os dados dos artigos com os comentários, caso tenha
+     * 
+     * @param $articles
+     */
+    public static function joinArticleComments($articles): Object 
+    {        
+        $data = [];
+        foreach($articles as $article) {        
+            $articleID = $article['id'];
+            $comments = new ArticleCommentsModel();
+            $comments->select(['comment'])
+                     ->where("article = {$articleID}")
+                     ->get(true);  
+            
+            array_push($data, array_merge($article, [
+                'comments' => $comments->result()
+            ]));                                 
+        }
+        return (object) $data;
+    }
 }
