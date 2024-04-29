@@ -29,6 +29,9 @@ class ArticleHelper
             case isset($params->article_status, $params->course_id):
                 return "article.status = {$params->article_status} and course.id = {$params->course_id}";
                 break;
+            case isset($params->event_id, $params->course_id):
+                return "article.event = {$params->event_id} and course.id = {$params->course_id}";
+                break;
             case isset($params->article_status):
                 return "article.status = {$params->article_status}";
                 break;
