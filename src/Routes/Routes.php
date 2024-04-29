@@ -2,6 +2,7 @@
 
 use MacoBackend\Controllers\ArticleController;
 use MacoBackend\Controllers\CourseController;
+use MacoBackend\Controllers\EventController;
 use MacoBackend\Controllers\HomeController;
 use MacoBackend\Controllers\UserController;
 
@@ -30,4 +31,8 @@ $app->group('/course', function () use ($app) {
     $app->post('/course/add', [CourseController::class, 'addCourse']); // Course add
     $app->post('/course/edit', [CourseController::class, 'editCourse']); // Course edit
     $app->delete('/course/del/{id}', [CourseController::class, 'delCourse']); // Course del        
+});
+
+$app->group('/event', function () use ($app) {
+    $app->get('/event/list', [EventController::class, 'listEvents']); // Event list                   
 });
