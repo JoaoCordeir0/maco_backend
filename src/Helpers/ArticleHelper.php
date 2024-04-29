@@ -17,27 +17,7 @@ class ArticleHelper
             // Só ID
             case isset($params->article_id): 
                 return "article.id = {$params->article_id}";   
-                break;
-            // Só status
-            case isset($params->article_status):
-                return "article.status = {$params->article_status}";
-                break;
-            // Só titulo           
-            case isset($params->article_title):
-                return "article.title like '%{$params->article_title}%'";
-                break;
-            // Só evento
-            case isset($params->event_id):
-                return "article.event = {$params->event_id}";
-                break;
-            // Só curso
-            case isset($params->course_id):
-                return "course.id = {$params->course_id}";
-                break;
-            // Só nome do curso
-            case isset($params->course_name):
-                return "course.name like '%{$params->course_name}%'";                
-                break;
+                break;            
             // Titulo e status
             case isset($params->article_title, $params->article_status): 
                 return "article.title like '%{$params->article_title}%' and article.status = {$params->article_status}";
@@ -57,7 +37,27 @@ class ArticleHelper
             // Evento e curso
             case isset($params->event_id, $params->course_id):
                 return "article.event = {$params->event_id} and course.id = {$params->course_id}";
-                break;                    
+                break;  
+            // Só status
+            case isset($params->article_status):
+                return "article.status = {$params->article_status}";
+                break;
+            // Só titulo           
+            case isset($params->article_title):
+                return "article.title like '%{$params->article_title}%'";
+                break;
+            // Só evento
+            case isset($params->event_id):
+                return "article.event = {$params->event_id}";
+                break;
+            // Só curso
+            case isset($params->course_id):
+                return "course.id = {$params->course_id}";
+                break;
+            // Só nome do curso
+            case isset($params->course_name):
+                return "course.name like '%{$params->course_name}%'";                
+                break;                  
         }        
         return '';       
     }    
