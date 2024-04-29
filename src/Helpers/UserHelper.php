@@ -95,22 +95,49 @@ class UserHelper
      * @param $role
      */
     public static function checkUserRole(Request $request, int $role): bool
+    {        
+        $userRole = UserHelper::getUserInToken($request, 'role');
+        $userRole = base64_decode($userRole);
+        $userRole = explode(':', $userRole);
+        $userRole = $userRole[0];        
+
+        if ($userRole == $role) {
+            return false;
+        }
+        return true;        
+    }
+
+    /**
+     * Função que valida o nivel de usuário para determinada função
+     * 
+     * @param $request
+     * @param $role
+     */
+    public static function getUserInToken(Request $request, string $info): string
     {
         $jwt = $request->getHeaderLine('Authorization');
         $jwt = str_replace('Bearer', '', $jwt);
         $jwt = str_replace(' ', '', $jwt);
         
         $user = JWT::decode($jwt, getenv('TOKEN_SECRET'), array_keys(JWT::$supported_algs));
-        $userID = $user->id;
-
-        $user = new UserModel();
-        $user->select(['role'])
-             ->where("id = {$userID}")
-             ->get();
-
-        if ($user->result()->role == $role) {
-            return false;
+       
+        switch($info) {
+            case 'id':
+                return $user->id;
+                break;
+            case 'name':
+                return $user->name;
+                break;
+            case 'email':
+                return $user->email;
+                break;
+            case 'ra':
+                return $user->ra;
+                break;
+            case 'role':
+                return $user->role;
+                break;
         }
-        return true;        
+        return '';        
     }
 }

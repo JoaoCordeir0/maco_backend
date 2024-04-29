@@ -26,7 +26,7 @@ final class ArticleController
 
         $params = (object) $request->getQueryParams();     
 
-        $condition = ArticleHelper::conditionByList($params);  
+        $condition = ArticleHelper::conditionByListByAdmin($params);  
        
         $article = new ArticleModel();       
         $article->select(['article.*', 'user.name as author', 'article_status.name as status', 'course.name as course'])                
@@ -53,7 +53,7 @@ final class ArticleController
             return ResponseController::message($response, 'error', 'This user is not a advisor');            
         }
 
-        $advisorID = $args['id'];
+        $advisorID = UserHelper::getUserInToken($request, 'id');
         
         $params = (object) $request->getQueryParams();   
         
@@ -84,7 +84,7 @@ final class ArticleController
             return ResponseController::message($response, 'error', 'This user is not a author');            
         }
 
-        $authorID = $args['id'];
+        $authorID = UserHelper::getUserInToken($request, 'id');
         
         $params = (object) $request->getQueryParams();   
         
@@ -113,14 +113,14 @@ final class ArticleController
     {        
         $parsedBody = $request->getParsedBody();
 
-        $user = $parsedBody['user'];
+        $user = UserHelper::getUserInToken($request, 'id');
         $title = $parsedBody['title'];
         $authors = $parsedBody['authors'];  
         $advisors = $parsedBody['advisors'];             
         $keywords = $parsedBody['keywords'];  
         $summary = $parsedBody['summary'];        
 
-        if (empty($user) || empty($title) || empty($authors) || empty($advisors) || empty($keywords) || empty($summary)) {            
+        if (empty($title) || empty($authors) || empty($advisors) || empty($keywords) || empty($summary)) {            
             return ResponseController::message($response, 'error', 'Missing information');            
         }
 
@@ -185,11 +185,11 @@ final class ArticleController
     {        
         $parsedBody = $request->getParsedBody();
 
-        $user = $parsedBody['user'];
+        $user = UserHelper::getUserInToken($request, 'id');
         $article = $parsedBody['article'];
         $comment = $parsedBody['comment'];          
 
-        if (empty($user) || empty($article) || empty($comment)) {                        
+        if (empty($article) || empty($comment)) {                        
             return ResponseController::message($response, 'error', 'Missing information');            
         }
 

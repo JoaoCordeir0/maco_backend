@@ -17,38 +17,26 @@ final class CourseController
     *    
     * @return Response
     */
-    public function listCourse(Request $request, Response $response, $args): Response
-    {     
+    public function listCourses(Request $request, Response $response, $args): Response
+    {       
         $params = (object) $request->getQueryParams();     
-
-        $condition = CourseHelper::conditionByList($params);
-
-        $course = new CourseModel();
-        
-        $course->select()
-               ->where($condition)
-               ->orderby()
-               ->get(true);
-                
-        return ResponseController::data($response, $course->result());        
-    }  
-
-    /**
-    * Realiza a listagem dos cursos de um determinado usuário
-    *    
-    * @return Response
-    */
-    public function listByUser(Request $request, Response $response, $args): Response
-    {                      
-        $userID = $args['id'];
-
-        $userCourses = new UserCourseModel();       
-        $userCourses->select(['course.*'])               
-                    ->innerjoin('course on user_course.course = course.id')                    
-                    ->where("user_course.user = {$userID}")                             
-                    ->get(true);              
-                        
-        return ResponseController::data($response, $userCourses->result());
+               
+        if (isset($params->user_id)) {
+            $course = new UserCourseModel();       
+            $course->select(['course.*'])               
+                   ->innerjoin('course on user_course.course = course.id')                    
+                   ->where("user_course.user = {$params->user_id}")                             
+                   ->get(true);   
+        } else {
+            $condition = CourseHelper::conditionByList($params);
+            
+            $course = new CourseModel();        
+            $course->select()
+                   ->where($condition)
+                   ->orderby()
+                   ->get(true);
+        }                                           
+        return ResponseController::data($response, $course->result());
     }   
 
     /**

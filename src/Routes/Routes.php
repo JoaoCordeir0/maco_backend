@@ -17,17 +17,16 @@ $app->group('/user', function () use ($app) {
 });
 
 $app->group('/article', function () use ($app) {
-    $app->get('/article/list', [ArticleController::class, 'listByAdmin']); // Article list  
-    $app->get('/article/list/advisor/{id}', [ArticleController::class, 'listByAdvisor']); // Article list      
-    $app->get('/article/list/author/{id}', [ArticleController::class, 'listByAuthor']); // Article list      
+    $app->get('/article/admin/list', [ArticleController::class, 'listByAdmin']); // Article list  
+    $app->get('/article/advisor/list', [ArticleController::class, 'listByAdvisor']); // Article list      
+    $app->get('/article/author/list', [ArticleController::class, 'listByAuthor']); // Article list      
     $app->post('/article/add', [ArticleController::class, 'addArticle']); // Article add        
     $app->post('/article/status', [ArticleController::class, 'updateStatus']); // Article update status        
     $app->post('/article/comment', [ArticleController::class, 'addComment']); // Article add comment        
 });
 
 $app->group('/course', function () use ($app) {
-    $app->get('/course/list', [CourseController::class, 'listCourses']); // Course list           
-    $app->get('/course/list/user/{id}', [CourseController::class, 'listByUser']); // Course list by user      
+    $app->get('/course/list', [CourseController::class, 'listCourses']); // Course list               
     $app->post('/course/add', [CourseController::class, 'addCourse']); // Course add
     $app->post('/course/edit', [CourseController::class, 'editCourse']); // Course edit
     $app->delete('/course/del/{id}', [CourseController::class, 'delCourse']); // Course del        

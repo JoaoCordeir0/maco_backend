@@ -11,7 +11,7 @@ class ArticleHelper
      * 
      * @param $params
      */
-    public static function conditionByList(object $params): string
+    public static function conditionByListByAdmin(object $params): string
     {
         if (isset($params->article_id)) {
             return "article.id = " . $params->article_id;   

@@ -11,11 +11,11 @@ class CourseHelper
      */
     public static function conditionByList(object $params): string
     {
-        if (isset($params->id)) {
-            return "id = " . $params->id;   
+        if (isset($params->course_id)) {
+            return "id = " . $params->course_id;   
         }
-        if (isset($params->name)) {            
-            return "name like '%" . $params->name . "%'";
+        if (isset($params->course_name)) {            
+            return "name like '%" . $params->course_name . "%'";
         }
         return '';       
     }    
