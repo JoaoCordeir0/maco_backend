@@ -3,6 +3,7 @@
 namespace MacoBackend\Helpers;
 
 use MacoBackend\Models\ArticleCommentsModel;
+use MacoBackend\Models\ArticleModel;
 
 class ArticleHelper
 {    
@@ -73,27 +74,27 @@ class ArticleHelper
             return "and article.id = " . $params->article_id;   
         }
         return '';       
-    }     
+    }         
+    
+    /**
+     * Função que retorna a condição da consulta de revisores
+     * 
+     * @param $advisorID
+     * @param $condition
+     */
+    public static function getConditionAdvisor($advisorID, $condition): string
+    {
+        return "article.status = 2 and course.id in (select course from user_course where user = {$advisorID})" . $condition;
+    }
 
     /**
-     * Função que junta os dados dos artigos com os comentários, caso tenha
+     * Função que retorna a condição da consulta dos autores
      * 
-     * @param $articles
+     * @param $authorID
+     * @param $condition
      */
-    public static function joinArticleComments($articles): Object 
-    {        
-        $data = [];
-        foreach($articles as $article) {        
-            $articleID = $article['id'];
-            $comments = new ArticleCommentsModel();
-            $comments->select(['comment'])
-                     ->where("article = {$articleID}")
-                     ->get(true);  
-            
-            array_push($data, array_merge($article, [
-                'comments' => $comments->result()
-            ]));                                 
-        }
-        return (object) $data;
+    public static function getConditionAuthor($authorID, $condition): string
+    {
+        return "(article.status = 1 or article.status = 3) and article.user = {$authorID} " . $condition;
     }
 }

@@ -96,7 +96,7 @@ class UserHelper
      */
     public static function checkUserRole(Request $request, int $role): bool
     {        
-        $userRole = UserHelper::getUserInToken($request, 'role');
+        $userRole = self::getUserInToken($request, 'role');
         $userRole = base64_decode($userRole);
         $userRole = explode(':', $userRole);
         $userRole = $userRole[0];        

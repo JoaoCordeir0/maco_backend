@@ -18,92 +18,58 @@ final class ArticleController
     *    
     * @return Response
     */
-    public function listByAdmin(Request $request, Response $response, $args): Response
-    {        
-        if (UserHelper::checkUserRole($request, RoleModel::ADMIN)) {            
-            return ResponseController::message($response, 'error', 'This user is not a admin');            
-        }
-
+    public function listArticles(Request $request, Response $response, $args): Response
+    {    
         $params = (object) $request->getQueryParams();     
 
         $condition = ArticleHelper::conditionByListByAdmin($params);  
-       
+        
+        switch($args['role']) {
+            case 'admin':
+                if (UserHelper::checkUserRole($request, RoleModel::ADMIN)) {            
+                    return ResponseController::message($response, 'error', 'This user is not a admin');            
+                }
+                break;
+            case 'advisor':
+                if (UserHelper::checkUserRole($request, RoleModel::ADVISOR)) {            
+                    return ResponseController::message($response, 'error', 'This user is not a advisor');            
+                }                
+                $condition = ArticleHelper::getConditionAdvisor(UserHelper::getUserInToken($request, 'id'), $condition);
+                break;
+            case 'author':
+                if (UserHelper::checkUserRole($request, RoleModel::AUTHOR)) {            
+                    return ResponseController::message($response, 'error', 'This user is not a author');            
+                }                
+                $condition = ArticleHelper::getConditionAuthor(UserHelper::getUserInToken($request, 'id'), $condition);
+                break;
+        }
+
         $article = new ArticleModel();       
-        $article->select(['article.*', 'user.name as author', 'article_status.name as status', 'course.name as course'])                
+        $article->select(['article.*', 'user.name as author', 'article_status.name as status', 'course.name as course', 'event_settings.name as event_name'])                
                 ->innerjoin('user on article.user = user.id')           
                 ->innerjoin('course on article.course = course.id')
-                ->innerjoin('article_status on article.status = article_status.id')         
+                ->innerjoin('article_status on article.status = article_status.id')
+                ->innerjoin('event_settings on article.event = event_settings.id')         
                 ->where($condition)     
                 ->orderby()
-                ->get(true);              
-                
-        $data = ArticleHelper::joinArticleComments($article->result());
+                ->get(true);   
 
-        return ResponseController::data($response, $data);
+        $data = [];
+        foreach($article->result() as $article) {        
+            $articleID = $article['id'];
+            $comments = new ArticleCommentsModel();
+            $comments->select(['comment'])
+                     ->where("article = {$articleID}")
+                     ->get(true);  
+            
+            array_push($data, array_merge($article, [
+                'comments' => $comments->result()
+            ]));                                 
+        }        
+
+        return ResponseController::data($response, (object) $data);
     }  
-
-    /**
-    * Realiza a listagem dos artigos de um revisor
-    *    
-    * @return Response
-    */
-    public function listByAdvisor(Request $request, Response $response, $args): Response
-    {                   
-        if (UserHelper::checkUserRole($request, RoleModel::ADVISOR)) {            
-            return ResponseController::message($response, 'error', 'This user is not a advisor');            
-        }
-
-        $advisorID = UserHelper::getUserInToken($request, 'id');
-        
-        $params = (object) $request->getQueryParams();   
-        
-        $condition = ArticleHelper::conditionByListByAdvisorAndAuthor($params);
-
-        $article = new ArticleModel();
-        $article->select(['article.*', 'user.name as author', 'article_status.name as status', 'course.name as course'])                                
-                ->innerjoin('user on article.user = user.id')           
-                ->innerjoin('course on article.course = course.id')
-                ->innerjoin('article_status on article.status = article_status.id')           
-                ->where("article.status = 2 and course.id in (select course from user_course where user = {$advisorID})" . $condition)     
-                ->orderby()
-                ->get(true);              
-
-        $data = ArticleHelper::joinArticleComments($article->result());
-
-        return ResponseController::data($response, $data);
-    }      
-
-    /**
-    * Realiza a listagem dos artigos de um author
-    *    
-    * @return Response
-    */
-    public function listByAuthor(Request $request, Response $response, $args): Response
-    {                   
-        if (UserHelper::checkUserRole($request, RoleModel::AUTHOR)) {            
-            return ResponseController::message($response, 'error', 'This user is not a author');            
-        }
-
-        $authorID = UserHelper::getUserInToken($request, 'id');
-        
-        $params = (object) $request->getQueryParams();   
-        
-        $condition = ArticleHelper::conditionByListByAdvisorAndAuthor($params);
-
-        $article = new ArticleModel();
-        $article->select(['article.*', 'user.name as author', 'article_status.name as status', 'course.name as course'])                                
-                ->innerjoin('user on article.user = user.id')           
-                ->innerjoin('course on article.course = course.id')
-                ->innerjoin('article_status on article.status = article_status.id')           
-                ->where("(article.status = 1 or article.status = 3) and article.user = {$authorID} " . $condition)     
-                ->orderby()
-                ->get(true);              
-        
-        $data = ArticleHelper::joinArticleComments($article->result());
-        
-        return ResponseController::data($response, $data);
-    }      
-
+    
     /**
     * Realiza a inserção de um artigo
     *    
