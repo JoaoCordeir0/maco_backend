@@ -4,7 +4,8 @@ namespace MacoBackend\Controllers;
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use MacoBackend\Models\EventSettingsModel;
+use MacoBackend\Models\EventsModel;
+use MacoBackend\Helpers\EventHelper;
 
 final class EventController
 {
@@ -14,9 +15,14 @@ final class EventController
     * @return Response
     */
     public function listEvents(Request $request, Response $response, $args): Response
-    {               
-        $event = new EventSettingsModel();
+    {           
+        $params = (object) $request->getQueryParams();  
+
+        $condition = EventHelper::conditionByList($params);  
+
+        $event = new EventsModel();
         $event->select()
+              ->where($condition)
               ->orderby('id', 'DESC')
               ->get(true);
         
