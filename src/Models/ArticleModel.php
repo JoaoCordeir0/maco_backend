@@ -10,6 +10,7 @@ class ArticleModel extends Opers {
     private $columns = [     
         'user:int:not null',    
         'course:int:not null',    
+        'event:int:not null',    
         'title:varchar(255):not null', 
         'authors:varchar(999):not null',        
         'advisors:varchar(999):not null',                
