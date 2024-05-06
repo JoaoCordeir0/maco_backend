@@ -22,7 +22,7 @@ final class ArticleController
     {    
         $params = (object) $request->getQueryParams();     
 
-        $condition = ArticleHelper::conditionByListByAdmin($params);  
+        $condition = ArticleHelper::conditionByList($params);  
         
         switch($args['role']) {
             case 'admin':
@@ -45,14 +45,14 @@ final class ArticleController
         }
 
         $article = new ArticleModel();       
-        $article->select(['article.*', 'user.name as author', 'article_status.name as status', 'course.name as course', 'event_settings.name as event_name'])                
+        $article->select(['article.*', 'user.name as author', 'article_status.name as status', 'course.name as course', 'events.name as event_name'])                
                 ->innerjoin('user on article.user = user.id')           
                 ->innerjoin('course on article.course = course.id')
                 ->innerjoin('article_status on article.status = article_status.id')
-                ->innerjoin('event_settings on article.event = event_settings.id')         
+                ->innerjoin('events on article.event = events.id')         
                 ->where($condition)     
                 ->orderby()
-                ->get(true);   
+                ->get(true);                   
 
         $data = [];
         foreach($article->result() as $article) {        

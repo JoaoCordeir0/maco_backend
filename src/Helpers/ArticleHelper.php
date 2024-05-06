@@ -12,7 +12,7 @@ class ArticleHelper
      * 
      * @param $params
      */
-    public static function conditionByListByAdmin(object $params): string
+    public static function conditionByList(object $params): string
     {
         switch($params) {                    
             // Só ID
@@ -58,23 +58,10 @@ class ArticleHelper
             // Só nome do curso
             case isset($params->course_name):
                 return "course.name like '%{$params->course_name}%'";                
-                break;                  
+                break;     
         }        
         return '';       
-    }    
-
-    /**
-     * Função que monta a condição where com base nos parametros passados na url
-     * 
-     * @param $params
-     */
-    public static function conditionByListByAdvisorAndAuthor(object $params): string
-    {
-        if (isset($params->article_id)) {
-            return "and article.id = " . $params->article_id;   
-        }
-        return '';       
-    }         
+    }             
     
     /**
      * Função que retorna a condição da consulta de revisores
@@ -84,6 +71,9 @@ class ArticleHelper
      */
     public static function getConditionAdvisor($advisorID, $condition): string
     {
+        if (strlen($condition) > 5) {
+            $condition = " and {$condition}";
+        }
         return "article.status = 2 and course.id in (select course from user_course where user = {$advisorID})" . $condition;
     }
 
@@ -95,6 +85,9 @@ class ArticleHelper
      */
     public static function getConditionAuthor($authorID, $condition): string
     {
+        if (strlen($condition) > 5) {
+            $condition = " and {$condition}";
+        }
         return "(article.status = 1 or article.status = 3) and article.user = {$authorID} " . $condition;
     }
 }
