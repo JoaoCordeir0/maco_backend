@@ -114,7 +114,11 @@ final class ArticleController
         if ($article->result()->status != 'success') {                            
             return ResponseController::message($response, 'error', $article->result()->message);
         }
-        return ResponseController::message($response, $article->result()->status, 'Article inserted successfully');     
+        return ResponseController::data($response, (object) [
+            'status' => $article->result()->status, 
+            'message' => 'Article inserted successfully',
+            'returnid' => $article->result()->returnid,
+        ]);     
     } 
 
     /**
