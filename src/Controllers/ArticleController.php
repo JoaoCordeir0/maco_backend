@@ -145,6 +145,29 @@ final class ArticleController
     }
 
     /**
+    * Realiza a exclusão de um artigo
+    *    
+    * @return Response
+    */
+    public function delArticle(Request $request, Response $response, $args): Response
+    {                
+        $articleID = $args['id'];
+
+        if (empty($articleID)) {
+            return ResponseController::message($response, 'error', 'Missing information');            
+        }        
+        
+        $articleDel = new ArticleModel();
+        $articleDel->where("id = {$articleID} and status = 1")                   
+                   ->delete();              
+                
+        if ($articleDel->result()->status != 'success') {            
+            return ResponseController::message($response, 'error', $articleDel->result()->message);                                   
+        }
+        return ResponseController::message($response, $articleDel->result()->status, 'Article delete successfully');
+    }
+
+    /**
     * Realiza a inserção de um comentário de revisão no artigo
     *    
     * @return Response
