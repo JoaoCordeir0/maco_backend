@@ -2,8 +2,7 @@
 
 namespace MacoBackend\Helpers;
 
-use MacoBackend\Models\ArticleCommentsModel;
-use MacoBackend\Models\ArticleModel;
+use MacoBackend\Models\UserCourseModel;
 
 class ArticleHelper
 {    
@@ -22,23 +21,11 @@ class ArticleHelper
             // Titulo e status
             case isset($params->article_title, $params->article_status): 
                 return "article.title like '%{$params->article_title}%' and article.status = {$params->article_status}";
-                break;               
-            // Status, curso e evento
-            case isset($params->article_status, $params->course_id, $params->event_id):
-                return "article.status = {$params->article_status} and course.id = {$params->course_id} and article.event = {$params->event_id}";
-                break;
-            // Status e curso
-            case isset($params->article_status, $params->course_id):
-                return "article.status = {$params->article_status} and course.id = {$params->course_id}";
-                break;
+                break;                        
             // Evento e status
             case isset($params->event_id, $params->article_status):
                 return "article.event = {$params->event_id} and article.status = {$params->article_status}";
-                break;
-            // Evento e curso
-            case isset($params->event_id, $params->course_id):
-                return "article.event = {$params->event_id} and course.id = {$params->course_id}";
-                break;  
+                break;            
             // Só status
             case isset($params->article_status):
                 return "article.status = {$params->article_status}";
@@ -50,21 +37,15 @@ class ArticleHelper
             // Só evento
             case isset($params->event_id):
                 return "article.event = {$params->event_id}";
-                break;
-            // Só curso
-            case isset($params->course_id):
-                return "course.id = {$params->course_id}";
-                break;
-            // Só nome do curso
-            case isset($params->course_name):
-                return "course.name like '%{$params->course_name}%'";                
-                break;     
+                break;                        
         }        
         return '';       
     }             
     
     /**
      * Função que retorna a condição da consulta de revisores
+     * 
+     * A condição retorna artigos somente dos cursos no qual o revisor está matriculado
      * 
      * @param $advisorID
      * @param $condition
@@ -74,7 +55,19 @@ class ArticleHelper
         if (strlen($condition) > 5) {
             $condition = " and {$condition}";
         }
-        return "article.status = 2 and course.id in (select course from user_course where user = {$advisorID})" . $condition;
+
+        $advisor = new UserCourseModel();
+        $advisor->select(['course'])
+                ->where("user = {$advisorID}")
+                ->get(true);
+                
+        $courses = '';
+        foreach($advisor->result() as $c) {
+            $courses .= $c['course'] . ' or ';
+        }
+        $courses = '(' . substr($courses, -0, -4) . ')'; 
+
+        return "article.status = 2 and ({$courses} in (select course from article_authors where article = article.id)) " . $condition;
     }
 
     /**
@@ -88,6 +81,6 @@ class ArticleHelper
         if (strlen($condition) > 5) {
             $condition = " and {$condition}";
         }
-        return "(article.status = 1 or article.status = 3) and article.user = {$authorID} " . $condition;
+        return "(article.status = 1 or article.status = 3) and ({$authorID} in (select user from article_authors where article_authors.article = article.id)) " . $condition;
     }
 }

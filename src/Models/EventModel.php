@@ -4,9 +4,9 @@ namespace MacoBackend\Models;
 
 use SimpleDB\Opers;
 
-class EventsModel extends Opers {
+class EventModel extends Opers {
 
-    private $table = 'events';
+    private $table = 'event';
     private $columns = [     
         'name:varchar(255):not null', 
         'start:datetime:not null',

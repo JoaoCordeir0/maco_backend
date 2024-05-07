@@ -4,6 +4,7 @@ namespace MacoBackend\Controllers;
 
 use MacoBackend\Helpers\ArticleHelper;
 use MacoBackend\Helpers\UserHelper;
+use MacoBackend\Models\ArticleAuthorsModel;
 use MacoBackend\Models\ArticleCommentsModel;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -45,25 +46,31 @@ final class ArticleController
         }
 
         $article = new ArticleModel();       
-        $article->select(['article.*', 'user.name as author', 'article_status.name as status', 'course.name as course', 'events.name as event_name'])                
-                ->innerjoin('user on article.user = user.id')           
-                ->innerjoin('course on article.course = course.id')
+        $article->select(['article.*', 'article_status.name as status', 'event.name as event_name'])                                                
                 ->innerjoin('article_status on article.status = article_status.id')
-                ->innerjoin('events on article.event = events.id')         
+                ->innerjoin('event on article.event = event.id')         
                 ->where($condition)     
                 ->orderby()
-                ->get(true);                   
-
+                ->get(true);              
+                
         $data = [];
         foreach($article->result() as $article) {        
             $articleID = $article['id'];
+            
             $comments = new ArticleCommentsModel();
             $comments->select(['comment'])
                      ->where("article = {$articleID}")
                      ->get(true);  
+
+            $authors = new ArticleAuthorsModel();
+            $authors->select(['user.name', 'user.cpf', 'user.email', 'user.ra'])
+                    ->innerjoin('user on user.id = article_authors.user')
+                    ->where("article = {$articleID}")
+                    ->get(true);              
             
             array_push($data, array_merge($article, [
-                'comments' => $comments->result()
+                'authors' => $authors->result(),
+                'comments' => $comments->result(),                
             ]));                                 
         }        
 

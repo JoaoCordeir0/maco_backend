@@ -22,7 +22,6 @@ $app->group('/article', function () use ($app) {
     $app->post('/article/add', [ArticleController::class, 'addArticle']); // Article add        
     $app->post('/article/status', [ArticleController::class, 'updateStatus']); // Article update status        
     $app->post('/article/comment', [ArticleController::class, 'addComment']); // Article add comment        
-    $app->delete('/article/del/{id}', [ArticleController::class, 'delArticle']); // Article del        
 });
 
 $app->group('/course', function () use ($app) {

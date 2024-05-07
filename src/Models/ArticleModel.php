@@ -7,13 +7,11 @@ use SimpleDB\Opers;
 class ArticleModel extends Opers {
 
     private $table = 'article';
-    private $columns = [     
-        'user:int:not null',    
-        'course:int:not null',    
+    private $columns = [               
         'event:int:not null',    
-        'title:varchar(255):not null', 
-        'authors:varchar(999):not null',        
+        'title:varchar(255):not null',         
         'advisors:varchar(999):not null',                
+        'co_advisors:varchar(999):',                
         'keywords:varchar(255):not null',
         'summary:text:not null',
         'status:int:not null',        
@@ -28,24 +26,19 @@ class ArticleModel extends Opers {
         return parent::result()->id;
     }    
 
-    public function getUser() 
-    {
-        return parent::result()->user;
-    }   
-
     public function getTitle() 
     {
         return parent::result()->title;
-    }   
-
-    public function getAuthors() 
-    {
-        return parent::result()->authors;
     }   
     
     public function getAdvisors() 
     {
         return parent::result()->advisors;
+    }   
+    
+    public function getCoAdvisors() 
+    {
+        return parent::result()->co_advisors;
     }   
     
     public function getKeywords() 
