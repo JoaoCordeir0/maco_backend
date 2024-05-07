@@ -72,33 +72,6 @@ final class CourseController
     }  
 
     /**
-    * Realiza o delete de um curso
-    *    
-    * @return Response
-    */
-    public function delCourse(Request $request, Response $response, $args): Response
-    {        
-        if (UserHelper::checkUserRole($request, RoleModel::ADMIN)) {
-            return ResponseController::message($response, 'error', 'This user is not a admin');
-        }
-
-        $idCourse = $args['id'];
-
-        if (empty($idCourse)) {            
-            return ResponseController::message($response, 'error', 'Missing information');         
-        }
-
-        $course = new CourseModel();
-        $course->where("id = {$idCourse}")
-               ->delete();              
-        
-        if ($course->result()->status != 'success') {    
-            return ResponseController::message($response, 'error', $course->result()->message);         
-        }
-        return ResponseController::message($response, $course->result()->status, 'Course deleted successfully');       
-    }  
-
-    /**
     * Realiza a edição de um curso
     *    
     * @return Response

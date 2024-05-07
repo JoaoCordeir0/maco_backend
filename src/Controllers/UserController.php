@@ -156,14 +156,26 @@ final class UserController
         $condition = UserHelper::conditionByList($params);
 
         $user = new UserModel();
-       
-        $user->select(['user.*', 'course.name as course'])                
-             ->innerjoin('user_course on user_course.user = user.id')                        
-             ->innerjoin('course on course.id = user_course.course')             
+        $user->select(['user.*'])                             
              ->where($condition)     
              ->orderby()
-             ->get(true);              
+             ->get(true);      
+             
+        $data = [];
+        foreach($user->result() as $user) {        
+            $userID = $user['id'];                         
+    
+            $courses = new UserCourseModel();
+            $courses->select(['course.id', 'course.name', 'course.description'])
+                    ->innerjoin('course on course.id = user_course.course')
+                    ->where("user = {$userID}")                    
+                    ->get(true);
+
+            array_push($data, array_merge($user, [
+                'courses' => $courses->result(),
+            ]));                                 
+        }       
                 
-        return ResponseController::data($response, $user->result());
+        return ResponseController::data($response, (object) $data);
     }     
 }

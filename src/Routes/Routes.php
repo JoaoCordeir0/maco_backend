@@ -22,13 +22,14 @@ $app->group('/article', function () use ($app) {
     $app->post('/article/add', [ArticleController::class, 'addArticle']); // Article add        
     $app->post('/article/status', [ArticleController::class, 'updateStatus']); // Article update status        
     $app->post('/article/comment', [ArticleController::class, 'addComment']); // Article add comment        
+    $app->delete('/article/del/{articleid}', [ArticleController::class, 'delArticle']); // Article del        
+    $app->delete('/article/author/del/{articleid}/{authorid}', [ArticleController::class, 'delAuthor']); // Article del        
 });
 
 $app->group('/course', function () use ($app) {
     $app->get('/course/list', [CourseController::class, 'listCourses']); // Course list               
     $app->post('/course/add', [CourseController::class, 'addCourse']); // Course add
-    $app->post('/course/edit', [CourseController::class, 'editCourse']); // Course edit
-    $app->delete('/course/del/{id}', [CourseController::class, 'delCourse']); // Course del        
+    $app->post('/course/edit', [CourseController::class, 'editCourse']); // Course edit    
 });
 
 $app->group('/event', function () use ($app) {

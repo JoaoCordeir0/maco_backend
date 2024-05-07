@@ -63,9 +63,11 @@ final class ArticleController
                      ->get(true);  
 
             $authors = new ArticleAuthorsModel();
-            $authors->select(['user.name', 'user.cpf', 'user.email', 'user.ra'])
+            $authors->select(['user.id', 'user.name', 'user.cpf', 'user.email', 'user.ra', 'article_authors.course', 'course.name as course_name'])
                     ->innerjoin('user on user.id = article_authors.user')
+                    ->innerjoin('course on course.id = article_authors.course')
                     ->where("article = {$articleID}")
+                    ->orderby('id', 'DESC')
                     ->get(true);              
             
             array_push($data, array_merge($article, [
@@ -85,46 +87,51 @@ final class ArticleController
     public function addArticle(Request $request, Response $response, $args): Response
     {        
         $parsedBody = $request->getParsedBody();
-
+        
         $user = UserHelper::getUserInToken($request, 'id');
         $event = $parsedBody['event'];
-        $title = $parsedBody['title'];
-        $authors = $parsedBody['authors'];  
-        $advisors = $parsedBody['advisors'];             
+        $title = $parsedBody['title'];        
+        $advisors = $parsedBody['advisors'];  
+        $co_advisors = $parsedBody['co_advisors'];             
         $keywords = $parsedBody['keywords'];  
         $summary = $parsedBody['summary'];        
 
-        if (empty($event) || empty($title) || empty($authors) || empty($advisors) || empty($keywords) || empty($summary)) {            
+        if (empty($event) || empty($title) || empty($advisors) || empty($keywords) || empty($summary)) {            
             return ResponseController::message($response, 'error', 'Missing information');            
-        }
-
+        }       
+        
         $userCourse = new UserCourseModel();
         $userCourse->select(['course'])
                    ->where("user = {$user}")
-                   ->orderby('id', 'DESC')         
-                   ->limit(1)          
-                   ->get();  
+                   ->orderby('id', 'DESC')
+                   ->limit(1)
+                   ->get();        
 
         $article = new ArticleModel();
-        $article->data([
-            'user' => $user,
-            'course' => $userCourse->result()->course,
+        $article->data([         
             'event' => $event,
-            'title' => $title,
-            'authors' => $authors,
+            'title' => $title, 
             'advisors' => $advisors,
+            'co_advisors' => $co_advisors,
             'keywords' => $keywords,
             'summary' => $summary,
             'status' => 1, // Status recebido
         ])->insert();              
         
-        if ($article->result()->status != 'success') {                            
+        $author = new ArticleAuthorsModel();
+        $author->data([
+            'article' => $article->getReturnID(),
+            'user' => $user,
+            'course' => $userCourse->getCourse(),
+        ])->insert();
+
+        if ($article->result()->status != 'success' || $author->result()->status != 'success') {                            
             return ResponseController::message($response, 'error', $article->result()->message);
         }
         return ResponseController::data($response, (object) [
             'status' => $article->result()->status, 
             'message' => 'Article inserted successfully',
-            'returnid' => $article->result()->returnid,
+            'returnid' => $article->getReturnID(),
         ]);     
     } 
 
@@ -162,20 +169,48 @@ final class ArticleController
     */
     public function delArticle(Request $request, Response $response, $args): Response
     {                
-        $articleID = $args['id'];
+        $articleID = $args['articleid'];
 
         if (empty($articleID)) {
             return ResponseController::message($response, 'error', 'Missing information');            
         }        
         
+        $authorDel = new ArticleAuthorsModel();
+        $authorDel->where("article = {$articleID}")                   
+                  ->delete();    
+
         $articleDel = new ArticleModel();
         $articleDel->where("id = {$articleID} and status = 1")                   
                    ->delete();              
                 
-        if ($articleDel->result()->status != 'success') {            
+        if ($authorDel->result()->status != 'success' && $articleDel->result()->status != 'success') {            
             return ResponseController::message($response, 'error', $articleDel->result()->message);                                   
         }
         return ResponseController::message($response, $articleDel->result()->status, 'Article delete successfully');
+    }
+
+    /**
+    * Realiza a exclusão de um artigo
+    *    
+    * @return Response
+    */
+    public function delAuthor(Request $request, Response $response, $args): Response
+    {                        
+        $articleID = $args['articleid'];
+        $userID = $args['authorid'];
+
+        if (empty($articleID) || empty($userID)) {
+            return ResponseController::message($response, 'error', 'Missing information');            
+        }        
+        
+        $authorDel = new ArticleAuthorsModel();
+        $authorDel->where("article = {$articleID} and user = {$userID}")                   
+                  ->delete();              
+                
+        if ($authorDel->result()->status != 'success') {            
+            return ResponseController::message($response, 'error', $authorDel->result()->message);                                   
+        }
+        return ResponseController::message($response, $authorDel->result()->status, 'Author delete successfully');
     }
 
     /**

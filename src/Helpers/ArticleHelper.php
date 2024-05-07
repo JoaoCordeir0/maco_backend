@@ -17,12 +17,16 @@ class ArticleHelper
             // Só ID
             case isset($params->article_id): 
                 return "article.id = {$params->article_id}";   
-                break;            
+                break;                                
             // Titulo e status
             case isset($params->article_title, $params->article_status): 
                 return "article.title like '%{$params->article_title}%' and article.status = {$params->article_status}";
-                break;                        
-            // Evento e status
+                break;     
+            // Status, curso e evento
+            case isset($params->course_id, $params->article_status, $params->event_id):
+                return "($params->course_id in (select course from article_authors where article = article.id)) and article.status = {$params->article_status} and article.event = {$params->event_id}";
+                break;                       
+            // Status e evento
             case isset($params->event_id, $params->article_status):
                 return "article.event = {$params->event_id} and article.status = {$params->article_status}";
                 break;            
