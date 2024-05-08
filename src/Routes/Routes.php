@@ -33,5 +33,7 @@ $app->group('/course', function () use ($app) {
 });
 
 $app->group('/event', function () use ($app) {
-    $app->get('/event/list', [EventController::class, 'listEvents']); // Event list                   
+    $app->get('/event/list', [EventController::class, 'listEvents']); // Event list    
+    $app->post('/event/add', [EventController::class, 'addEvent']); // Event add                       
+    $app->post('/event/edit', [EventController::class, 'editEvent']); // Event edit
 });

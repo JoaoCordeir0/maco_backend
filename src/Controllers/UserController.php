@@ -148,7 +148,7 @@ final class UserController
     public function listUsers(Request $request, Response $response, $args): Response
     {        
         if (UserHelper::checkUserRole($request, RoleModel::ADMIN)) {            
-            return ResponseController::message($response, 'error', 'This user is not admin'); 
+            return ResponseController::message($response, 'error', 'Operation denied! User is not admin'); 
         }
         
         $params = (object) $request->getQueryParams();     

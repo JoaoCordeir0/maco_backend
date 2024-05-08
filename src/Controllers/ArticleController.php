@@ -28,18 +28,18 @@ final class ArticleController
         switch($args['role']) {
             case 'admin':
                 if (UserHelper::checkUserRole($request, RoleModel::ADMIN)) {            
-                    return ResponseController::message($response, 'error', 'This user is not a admin');            
+                    return ResponseController::message($response, 'error', 'Operation denied! User is not a admin');            
                 }
                 break;
             case 'advisor':
                 if (UserHelper::checkUserRole($request, RoleModel::ADVISOR)) {            
-                    return ResponseController::message($response, 'error', 'This user is not a advisor');            
+                    return ResponseController::message($response, 'error', 'Operation denied! User is not a advisor');            
                 }                
                 $condition = ArticleHelper::getConditionAdvisor(UserHelper::getUserInToken($request, 'id'), $condition);
                 break;
             case 'author':
                 if (UserHelper::checkUserRole($request, RoleModel::AUTHOR)) {            
-                    return ResponseController::message($response, 'error', 'This user is not a author');            
+                    return ResponseController::message($response, 'error', 'Operation denied! User is not a author');            
                 }                
                 $condition = ArticleHelper::getConditionAuthor(UserHelper::getUserInToken($request, 'id'), $condition);
                 break;

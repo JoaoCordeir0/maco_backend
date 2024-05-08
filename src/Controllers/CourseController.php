@@ -47,7 +47,7 @@ final class CourseController
     public function addCourse(Request $request, Response $response, $args): Response
     {        
         if (UserHelper::checkUserRole($request, RoleModel::ADMIN)) {            
-            return ResponseController::message($response, 'error', 'This user is not a admin');
+            return ResponseController::message($response, 'error', 'Operation denied! User is not a admin');
         }
 
         $parsedBody = $request->getParsedBody();
@@ -79,7 +79,7 @@ final class CourseController
     public function editCourse(Request $request, Response $response, $args): Response
     {        
         if (UserHelper::checkUserRole($request, RoleModel::ADMIN)) {
-            $response->getBody()->write(json_encode(['status' => 'error', 'message' => 'This user is not a admin']));
+            $response->getBody()->write(json_encode(['status' => 'error', 'message' => 'Operation denied! User is not a admin']));
             return $response;
         }
 

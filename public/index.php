@@ -41,6 +41,9 @@ $app->addRoutingMiddleware();
  */
 $errorMiddleware = $app->addErrorMiddleware(true, true, true);
 
+// Middleware to parse the JSON request body
+$app->addBodyParsingMiddleware();
+
 // Api Errors
 $errorMiddleware->setDefaultErrorHandler(function (Request $request, Throwable $exception) use ($app) {
   $statusCode = 500;
