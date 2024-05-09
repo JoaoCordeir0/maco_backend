@@ -14,7 +14,7 @@ $app->group('/user', function () use ($app) {
     $app->post('/user/login', [UserController::class, 'login']); // Login   
     $app->post('/user/register', [UserController::class, 'register']); // Register   
     $app->post('/user/recoverpassword', [UserController::class, 'recoverPassword']); // Recover password
-    $app->get('/user/list', [UserController::class, 'listUsers']); // User list   
+    $app->get('/user/list', [UserController::class, 'listUsers']); // User list       
 });
 
 $app->group('/article', function () use ($app) {

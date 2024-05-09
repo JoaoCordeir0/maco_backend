@@ -61,16 +61,23 @@ class UserHelper
      */
     public static function conditionByList(object $params): string
     {
-        if (isset($params->user_id)) {
-            return "user.id = " . $params->user_id;   
+        $condition = '';
+        if (isset($params->mode)) {
+            $condition = "user.role = 3"; 
         }
+        if (isset($params->user_id)) {
+            return "{$condition} and user.id = {$params->user_id}";   
+        }
+        else if (isset($params->user_info)) {
+            return "{$condition} and (user.name like '%{$params->user_info}%' or user.email like '%{$params->user_info}%' or user.ra like '%{$params->user_info}%')";   
+        }       
         else if (isset($params->course_id)) {            
-            return "course.id = " . $params->course_id;
+            return "{$condition} and course.id = {$params->course_id}";
         }                      
         else if (isset($params->course_name)) {            
-            return "course.name like '%" . $params->course_name . "%'";
+            return "{$condition} and course.name like '%{$params->course_name}%'";
         }                      
-        return '';       
+        return $condition;       
     }    
 
     /**

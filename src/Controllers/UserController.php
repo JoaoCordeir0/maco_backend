@@ -146,23 +146,23 @@ final class UserController
     * @return Response
     */
     public function listUsers(Request $request, Response $response, $args): Response
-    {        
-        if (UserHelper::checkUserRole($request, RoleModel::ADMIN)) {            
-            return ResponseController::message($response, 'error', 'Operation denied! User is not admin'); 
-        }
-        
+    {                        
         $params = (object) $request->getQueryParams();     
+     
+        if (UserHelper::checkUserRole($request, RoleModel::ADMIN) && $params->mode != 'author') {            
+            return ResponseController::message($response, 'error', 'Operation denied! User is not admin'); 
+        }              
 
         $condition = UserHelper::conditionByList($params);
 
-        $user = new UserModel();
-        $user->select(['user.*'])                             
+        $users = new UserModel();
+        $users->select(['user.*'])                             
              ->where($condition)     
              ->orderby()
-             ->get(true);      
-             
+             ->get(true);                           
+
         $data = [];
-        foreach($user->result() as $user) {        
+        foreach($users->result() as $user) {        
             $userID = $user['id'];                         
     
             $courses = new UserCourseModel();
@@ -177,5 +177,5 @@ final class UserController
         }       
                 
         return ResponseController::data($response, (object) $data);
-    }     
+    }        
 }
