@@ -157,9 +157,9 @@ final class UserController
 
         $users = new UserModel();
         $users->select(['user.*'])                             
-             ->where($condition)     
-             ->orderby()
-             ->get(true);                           
+              ->where($condition)     
+              ->orderby()
+              ->get(true);                           
 
         $data = [];
         foreach($users->result() as $user) {        

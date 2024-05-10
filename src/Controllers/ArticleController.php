@@ -9,6 +9,7 @@ use MacoBackend\Models\ArticleCommentsModel;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use MacoBackend\Models\ArticleModel;
+use MacoBackend\Models\ArticleStatusModel;
 use MacoBackend\Models\RoleModel;
 use MacoBackend\Models\UserCourseModel;
 
@@ -67,7 +68,7 @@ final class ArticleController
                     ->innerjoin('user on user.id = article_authors.user')
                     ->innerjoin('course on course.id = article_authors.course')
                     ->where("article = {$articleID}")
-                    ->orderby('id', 'DESC')
+                    ->orderby()
                     ->get(true);              
             
             array_push($data, array_merge($article, [
@@ -140,7 +141,7 @@ final class ArticleController
     *    
     * @return Response
     */
-    public function updateStatus(Request $request, Response $response, $args): Response
+    public function editStatus(Request $request, Response $response, $args): Response
     {        
         $parsedBody = $request->getParsedBody();
 
@@ -241,5 +242,41 @@ final class ArticleController
             return ResponseController::message($response, 'error', $articleComment->result()->debug);                        
         }           
         return ResponseController::message($response, $articleComment->result()->status, 'Article comment inserted successfully');
+    } 
+
+    /**
+    * Realiza a inserção de autores no artigo
+    *    
+    * @return Response
+    */
+    public function addAuthor(Request $request, Response $response, $args): Response
+    {        
+        $parsedBody = $request->getParsedBody();
+
+        $article = $parsedBody['article'];
+        $author = $parsedBody['author'];          
+
+        if (empty($article) || empty($author)) {                        
+            return ResponseController::message($response, 'error', 'Missing information');            
+        }
+
+        $authorCourse = new UserCourseModel();
+        $authorCourse->select(['course'])
+                     ->where("user = {$author}")
+                     ->orderby('id', 'DESC')
+                     ->limit(1)
+                     ->get();   
+
+        $articleAuthor = new ArticleAuthorsModel();
+        $articleAuthor->data([
+            'user' => $author,
+            'article' => $article,
+            'course' => $authorCourse->getCourse(),           
+        ])->insert();            
+        
+        if ($articleAuthor->result()->status != 'success') {            
+            return ResponseController::message($response, 'error', $articleAuthor->result()->debug);                        
+        }           
+        return ResponseController::message($response, $articleAuthor->result()->status, 'Author inserted successfully');
     } 
 }
