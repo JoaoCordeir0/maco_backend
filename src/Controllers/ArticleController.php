@@ -145,7 +145,7 @@ final class ArticleController
     {        
         $parsedBody = $request->getParsedBody();
 
-        $id = $parsedBody['id'];
+        $id = $parsedBody['article'];
         $status = $parsedBody['status'];        
 
         if (empty($id) || empty($status)) {            
@@ -161,6 +161,33 @@ final class ArticleController
             return ResponseController::message($response, 'error', $articleStatus->result()->message);                                   
         }
         return ResponseController::message($response, $articleStatus->result()->status, 'Article status update successfully');
+    }
+
+    /**
+    * Realiza a edição da palavras chave do artigo
+    *    
+    * @return Response
+    */
+    public function editKeywords(Request $request, Response $response, $args): Response
+    {        
+        $parsedBody = $request->getParsedBody();
+
+        $id = $parsedBody['article'];
+        $keywords = $parsedBody['keywords'];        
+
+        if (empty($id) || empty($keywords)) {            
+            return ResponseController::message($response, 'error', 'Missing information');            
+        }
+
+        $articleKeys = new ArticleModel();
+        $articleKeys->data(['keywords' => $keywords])
+                    ->where("id = {$id}")
+                    ->update();              
+                
+        if ($articleKeys->result()->status != 'success') {            
+            return ResponseController::message($response, 'error', $articleKeys->result()->message);                                   
+        }
+        return ResponseController::message($response, $articleKeys->result()->status, 'Article keywords update successfully');
     }
 
     /**
