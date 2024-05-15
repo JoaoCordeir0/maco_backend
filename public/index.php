@@ -75,7 +75,7 @@ $app->options('/{routes:.+}', function (Request $request, Response $response) {
 
 // Api Middleware
 $app->add(new Tuupola\Middleware\JwtAuthentication([  
-  'ignore' => ['/user/login', '/user/register', '/user/recoverpassword', '/ping'],    
+  'ignore' => ['/user/login', '/user/register', '/user/recoverpassword', '/ping', '/token'],    
   'secret' => getenv('TOKEN_SECRET'),
   'secure' => false, // Caso não tiver https é necessario usar false
 ]));

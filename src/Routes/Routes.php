@@ -9,6 +9,7 @@ use MacoBackend\Controllers\UserController;
 // Default route
 $app->get('/', [HomeController::class, 'home']);
 $app->get('/ping', [HomeController::class, 'ping']);
+$app->post('/token', [UserController::class, 'validToken']);
 
 $app->group('/user', function () use ($app) {
     $app->post('/user/login', [UserController::class, 'login']); // Login   

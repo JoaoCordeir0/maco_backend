@@ -2,6 +2,7 @@
 
 namespace MacoBackend\Helpers;
 
+use Exception;
 use \Firebase\JWT\JWT;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use MacoBackend\Models\RoleModel;
@@ -146,5 +147,20 @@ class UserHelper
                 break;
         }
         return '';        
+    }
+
+    /**
+     * Função que valida o token
+     * 
+     * @param $token
+     */
+    public static function isValidToken(string $token): bool 
+    {
+        try {
+            JWT::decode($token, getenv('TOKEN_SECRET'), array_keys(JWT::$supported_algs));
+            return true;
+        } catch(Exception $e) {
+            return false;
+        }
     }
 }

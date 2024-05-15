@@ -177,5 +177,24 @@ final class UserController
         }       
                 
         return ResponseController::data($response, (object) $data);
-    }        
+    }  
+    
+    /**
+     * Função que valida um token
+     * 
+     * @return Response
+     */
+    public function validToken(Request $request, Response $response, $args): Response
+    {
+        $token = ($request->getParsedBody())['token'];
+
+        if (empty($token)) {            
+            return ResponseController::message($response, 'error', 'Token must not be empty');                
+        }
+
+        if (UserHelper::isValidToken($token)) {                         
+            return ResponseController::message($response, 'success', 'Valid token');                     
+        }
+        return ResponseController::message($response, 'error', 'Invalid token');    
+    }
 }
