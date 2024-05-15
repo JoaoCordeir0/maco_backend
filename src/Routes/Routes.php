@@ -20,7 +20,8 @@ $app->group('/user', function () use ($app) {
 
 $app->group('/article', function () use ($app) {
     $app->get('/article/list/{role}', [ArticleController::class, 'listArticles']); // Article list      
-    $app->post('/article/add', [ArticleController::class, 'addArticle']); // Article add        
+    $app->post('/article/add', [ArticleController::class, 'addArticle']); // Article add     
+    $app->post('/article/edit/data', [ArticleController::class, 'editArticle']); // Article title and summary       
     $app->post('/article/edit/status', [ArticleController::class, 'editStatus']); // Article update status        
     $app->post('/article/edit/keywords', [ArticleController::class, 'editKeywords']); // Article update keywords        
     $app->post('/article/add/comment', [ArticleController::class, 'addComment']); // Article add comment            

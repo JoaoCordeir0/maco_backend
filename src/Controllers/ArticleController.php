@@ -152,22 +152,50 @@ final class ArticleController
     {        
         $parsedBody = $request->getParsedBody();
 
-        $id = $parsedBody['article'];
+        $article = $parsedBody['article'];
         $status = $parsedBody['status'];        
 
-        if (empty($id) || empty($status)) {            
+        if (empty($article) || empty($status)) {            
             return ResponseController::message($response, 'error', 'Missing information');            
         }
 
         $articleStatus = new ArticleModel();
         $articleStatus->data(['status' => $status])
-                ->where("id = {$id}")
-                ->update();              
+                      ->where("id = {$article}")
+                      ->update();              
                 
         if ($articleStatus->result()->status != 'success') {            
             return ResponseController::message($response, 'error', $articleStatus->result()->message);                                   
         }
         return ResponseController::message($response, $articleStatus->result()->status, 'Article status update successfully');
+    }
+
+    /**
+    * Realiza a edição do titulo e resumo do artigo
+    *    
+    * @return Response
+    */
+    public function editArticle(Request $request, Response $response, $args): Response
+    {        
+        $parsedBody = $request->getParsedBody();
+
+        $article = $parsedBody['article'];
+        $title = $parsedBody['title'];    
+        $summary = $parsedBody['summary'];    
+
+        if (empty($article) || empty($title) || empty($summary)) {            
+            return ResponseController::message($response, 'error', 'Missing information');            
+        }
+
+        $articleEdit = new ArticleModel();
+        $articleEdit->data(['title' => $title, 'summary' => $summary])
+                    ->where("id = {$article}")
+                    ->update();              
+                
+        if ($articleEdit->result()->status != 'success') {            
+            return ResponseController::message($response, 'error', $articleEdit->result()->message);                                   
+        }
+        return ResponseController::message($response, $articleEdit->result()->status, 'Article data update successfully');
     }
 
     /**
