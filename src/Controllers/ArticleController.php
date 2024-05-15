@@ -9,7 +9,7 @@ use MacoBackend\Models\ArticleCommentsModel;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use MacoBackend\Models\ArticleModel;
-use MacoBackend\Models\ArticleStatusModel;
+use MacoBackend\Models\ArticleReferencesModel;
 use MacoBackend\Models\RoleModel;
 use MacoBackend\Models\UserCourseModel;
 
@@ -59,8 +59,9 @@ final class ArticleController
             $articleID = $article['id'];
             
             $comments = new ArticleCommentsModel();
-            $comments->select(['comment'])
-                     ->where("article = {$articleID}")
+            $comments->select(['user.name', 'comment', 'article_comments.created_at'])
+                     ->innerjoin('user on user.id = article_comments.user')
+                     ->where("article_comments.article = {$articleID}")
                      ->get(true);  
 
             $authors = new ArticleAuthorsModel();
@@ -71,9 +72,15 @@ final class ArticleController
                     ->orderby()
                     ->get(true);              
             
+            $references = new ArticleReferencesModel();
+            $references->select(['id', 'reference'])
+                       ->where("article = {$articleID}")
+                       ->get(true);
+
             array_push($data, array_merge($article, [
                 'authors' => $authors->result(),
-                'comments' => $comments->result(),                
+                'comments' => $comments->result(),
+                'references' => $references->result(),
             ]));                                 
         }        
 
@@ -172,16 +179,16 @@ final class ArticleController
     {        
         $parsedBody = $request->getParsedBody();
 
-        $id = $parsedBody['article'];
+        $article = $parsedBody['article'];
         $keywords = $parsedBody['keywords'];        
 
-        if (empty($id) || empty($keywords)) {            
+        if (empty($article)) {            
             return ResponseController::message($response, 'error', 'Missing information');            
         }
 
         $articleKeys = new ArticleModel();
         $articleKeys->data(['keywords' => $keywords])
-                    ->where("id = {$id}")
+                    ->where("id = {$article}")
                     ->update();              
                 
         if ($articleKeys->result()->status != 'success') {            
@@ -207,11 +214,15 @@ final class ArticleController
         $authorDel->where("article = {$articleID}")                   
                   ->delete();    
 
+        $referenceDel = new ArticleReferencesModel();
+        $referenceDel->where("article = {$articleID}")                   
+                     ->delete();
+
         $articleDel = new ArticleModel();
         $articleDel->where("id = {$articleID} and status = 1")                   
-                   ->delete();              
+                   ->delete();                            
                 
-        if ($authorDel->result()->status != 'success' && $articleDel->result()->status != 'success') {            
+        if ($authorDel->getStatus() != 'success' && $referenceDel->getStatus() != 'success' && $articleDel->getStatus() != 'success') {            
             return ResponseController::message($response, 'error', $articleDel->result()->message);                                   
         }
         return ResponseController::message($response, $articleDel->result()->status, 'Article delete successfully');
@@ -305,5 +316,58 @@ final class ArticleController
             return ResponseController::message($response, 'error', $articleAuthor->result()->debug);                        
         }           
         return ResponseController::message($response, $articleAuthor->result()->status, 'Author inserted successfully');
+    } 
+
+    
+    /**
+    * Realiza a inserção de um comentário de revisão no artigo
+    *    
+    * @return Response
+    */
+    public function addReference(Request $request, Response $response, $args): Response
+    {        
+        $parsedBody = $request->getParsedBody();
+        
+        $article = $parsedBody['article'];
+        $reference = $parsedBody['reference'];          
+
+        if (empty($article) || empty($reference)) {                        
+            return ResponseController::message($response, 'error', 'Missing information');            
+        }
+
+        $articleRef = new ArticleReferencesModel();
+        $articleRef->data([            
+            'article' => $article,
+            'reference' => $reference,           
+        ])->insert();            
+        
+        if ($articleRef->result()->status != 'success') {            
+            return ResponseController::message($response, 'error', $articleRef->result()->debug);                        
+        }           
+        return ResponseController::message($response, $articleRef->result()->status, 'Article reference inserted successfully');
+    } 
+
+    /**
+    * Realiza a exclusão de uma referência de revisão no artigo
+    *    
+    * @return Response
+    */
+    public function delReference(Request $request, Response $response, $args): Response
+    {        
+        $article = $args['articleid'];
+        $refID = $args['refid'];          
+
+        if (empty($article) || empty($refID)) {                        
+            return ResponseController::message($response, 'error', 'Missing information');            
+        }
+
+        $articleRef = new ArticleReferencesModel();
+        $articleRef->where("article = {$article} and id = {$refID}")
+                   ->delete();            
+        
+        if ($articleRef->result()->status != 'success') {            
+            return ResponseController::message($response, 'error', $articleRef->result()->debug);                        
+        }           
+        return ResponseController::message($response, $articleRef->result()->status, 'Article reference deleted successfully');
     } 
 }

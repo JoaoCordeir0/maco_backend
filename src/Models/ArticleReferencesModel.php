@@ -31,6 +31,11 @@ class ArticleReferencesModel extends Opers {
         return parent::result()->reference;
     }    
 
+    public function getStatus()
+    {
+        return parent::result()->status;
+    }
+
     public function getCreatedAt() 
     {
         return parent::result()->created_at;
