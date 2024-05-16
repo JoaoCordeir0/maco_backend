@@ -65,13 +65,13 @@ class ArticleHelper
                 ->where("user = {$advisorID}")
                 ->get(true);
                 
-        $courses = '';
+        $queryCourse = '';
         foreach($advisor->result() as $c) {
-            $courses .= $c['course'] . ' or ';
+            $queryCourse .= $c['course'] . ' in (select course from article_authors where article = article.id) or ';
         }
-        $courses = '(' . substr($courses, -0, -4) . ')'; 
+        $queryCourse = '(' . substr($queryCourse, -0, -4) . ')'; 
 
-        return "article.status = 2 and ({$courses} in (select course from article_authors where article = article.id)) " . $condition;
+        return "article.status = 2 and {$queryCourse} " . $condition;
     }
 
     /**

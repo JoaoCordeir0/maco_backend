@@ -53,7 +53,7 @@ final class ArticleController
                 ->where($condition)     
                 ->orderby()
                 ->get(true);              
-                
+    
         $data = [];
         foreach($article->result() as $article) {        
             $articleID = $article['id'];
