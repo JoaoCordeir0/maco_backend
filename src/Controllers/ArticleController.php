@@ -59,7 +59,7 @@ final class ArticleController
             $articleID = $article['id'];
             
             $comments = new ArticleCommentsModel();
-            $comments->select(['user.name', 'comment', 'article_comments.created_at'])
+            $comments->select(['user.id as user_id', 'user.name as user_name', 'comment', 'article_comments.created_at'])
                      ->innerjoin('user on user.id = article_comments.user')
                      ->where("article_comments.article = {$articleID}")
                      ->get(true);  
