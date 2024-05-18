@@ -29,7 +29,11 @@ class ArticleHelper
             // Status e evento
             case isset($params->event_id, $params->article_status):
                 return "article.event = {$params->event_id} and article.status = {$params->article_status}";
-                break;            
+                break;  
+            // Curso e evento
+            case isset($params->course_id, $params->event_id):
+                return "($params->course_id in (select course from article_authors where article = article.id)) and article.event = {$params->event_id}";
+                break;                    
             // Só status
             case isset($params->article_status):
                 return "article.status = {$params->article_status}";
