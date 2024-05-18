@@ -398,4 +398,33 @@ final class ArticleController
         }           
         return ResponseController::message($response, $articleRef->result()->status, 'Article reference deleted successfully');
     } 
+
+    
+    /**
+    * Realiza a edição das referências bibliograficas de um artigo
+    *    
+    * @return Response
+    */
+    public function editReference(Request $request, Response $response, $args): Response
+    {        
+        $parsedBody = $request->getParsedBody();
+        
+        $article = $parsedBody['article'];
+        $refID = $parsedBody['ref_id'];
+        $refStr = $parsedBody['ref_str'];        
+
+        if (empty($article)) {            
+            return ResponseController::message($response, 'error', 'Missing information');            
+        }
+
+        $articleKeys = new ArticleReferencesModel();
+        $articleKeys->data(['reference' => $refStr])
+                    ->where("id = {$refID} and article = {$article}")
+                    ->update();              
+                
+        if ($articleKeys->result()->status != 'success') {            
+            return ResponseController::message($response, 'error', $articleKeys->result()->message);                                   
+        }
+        return ResponseController::message($response, $articleKeys->result()->status, 'Article references update successfully');
+    }
 }

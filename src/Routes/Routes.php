@@ -27,6 +27,7 @@ $app->group('/article', function () use ($app) {
     $app->post('/article/add/comment', [ArticleController::class, 'addComment']); // Article add comment            
     $app->post('/article/add/author', [ArticleController::class, 'addAuthor']); // Article add author        
     $app->post('/article/add/reference', [ArticleController::class, 'addReference']); // Article add reference
+    $app->post('/article/edit/reference', [ArticleController::class, 'editReference']); // Article edit reference
     $app->delete('/article/del/{articleid}', [ArticleController::class, 'delArticle']); // Article del        
     $app->delete('/article/author/del/{articleid}/{authorid}', [ArticleController::class, 'delAuthor']); // Article del        
     $app->delete('/article/reference/del/{articleid}/{refid}', [ArticleController::class, 'delReference']); // Article del        
