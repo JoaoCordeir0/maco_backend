@@ -63,6 +63,9 @@ class UserHelper
     public static function conditionByList(object $params): string
     {
         $condition = '';
+        if (isset($params->mode, $params->article_id) && $params->mode == 'advisor') {
+            $condition = "user.role = 2 and user.id not in (select user from article_advisors where article = {$params->article_id})"; 
+        }
         if (isset($params->mode, $params->article_id) && $params->mode == 'author') {
             $condition = "user.role = 3 and user.id not in (select user from article_authors where article = {$params->article_id})"; 
         }

@@ -4,6 +4,7 @@ namespace MacoBackend\Controllers;
 
 use MacoBackend\Helpers\ArticleHelper;
 use MacoBackend\Helpers\UserHelper;
+use MacoBackend\Models\ArticleAdvisorsModel;
 use MacoBackend\Models\ArticleAuthorsModel;
 use MacoBackend\Models\ArticleCommentsModel;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -70,7 +71,14 @@ final class ArticleController
                     ->innerjoin('course on course.id = article_authors.course')
                     ->where("article = {$articleID}")
                     ->orderby()
-                    ->get(true);              
+                    ->get(true);    
+                    
+            $advisors = new ArticleAdvisorsModel();
+            $advisors->select(['user.id', 'user.name', 'user.cpf', 'user.email', 'user.ra', 'article_advisors.is_coadvisor'])
+                     ->innerjoin('user on user.id = article_advisors.user')                     
+                     ->where("article = {$articleID}")
+                     ->orderby()
+                     ->get(true);            
             
             $references = new ArticleReferencesModel();
             $references->select(['id', 'reference'])
@@ -79,6 +87,7 @@ final class ArticleController
 
             array_push($data, array_merge($article, [
                 'authors' => $authors->result(),
+                'advisors' => $advisors->result(),
                 'comments' => $comments->result(),
                 'references' => $references->result(),
             ]));                                 
@@ -242,6 +251,10 @@ final class ArticleController
         $authorDel->where("article = {$articleID}")                   
                   ->delete();    
 
+        $advisorDel = new ArticleAdvisorsModel();
+        $advisorDel->where("article = {$articleID}")                   
+                   ->delete();  
+
         $referenceDel = new ArticleReferencesModel();
         $referenceDel->where("article = {$articleID}")                   
                      ->delete();
@@ -250,65 +263,11 @@ final class ArticleController
         $articleDel->where("id = {$articleID} and status = 1")                   
                    ->delete();                            
                 
-        if ($authorDel->getStatus() != 'success' && $referenceDel->getStatus() != 'success' && $articleDel->getStatus() != 'success') {            
+        if ($authorDel->getStatus() != 'success' && $advisorDel->getStatus() != 'success' && $referenceDel->getStatus() != 'success' && $articleDel->getStatus() != 'success') {            
             return ResponseController::message($response, 'error', $articleDel->result()->message);                                   
         }
         return ResponseController::message($response, $articleDel->result()->status, 'Article delete successfully');
     }
-
-    /**
-    * Realiza a exclusão de um artigo
-    *    
-    * @return Response
-    */
-    public function delAuthor(Request $request, Response $response, $args): Response
-    {                        
-        $articleID = $args['articleid'];
-        $userID = $args['authorid'];
-
-        if (empty($articleID) || empty($userID)) {
-            return ResponseController::message($response, 'error', 'Missing information');            
-        }        
-        
-        $authorDel = new ArticleAuthorsModel();
-        $authorDel->where("article = {$articleID} and user = {$userID}")                   
-                  ->delete();              
-                
-        if ($authorDel->result()->status != 'success') {            
-            return ResponseController::message($response, 'error', $authorDel->result()->message);                                   
-        }
-        return ResponseController::message($response, $authorDel->result()->status, 'Author delete successfully');
-    }
-
-    /**
-    * Realiza a inserção de um comentário de revisão no artigo
-    *    
-    * @return Response
-    */
-    public function addComment(Request $request, Response $response, $args): Response
-    {        
-        $parsedBody = $request->getParsedBody();
-
-        $user = UserHelper::getUserInToken($request, 'id');
-        $article = $parsedBody['article'];
-        $comment = $parsedBody['comment'];          
-
-        if (empty($article) || empty($comment)) {                        
-            return ResponseController::message($response, 'error', 'Missing information');            
-        }
-
-        $articleComment = new ArticleCommentsModel();
-        $articleComment->data([
-            'user' => $user,
-            'article' => $article,
-            'comment' => $comment,           
-        ])->insert();            
-        
-        if ($articleComment->result()->status != 'success') {            
-            return ResponseController::message($response, 'error', $articleComment->result()->debug);                        
-        }           
-        return ResponseController::message($response, $articleComment->result()->status, 'Article comment inserted successfully');
-    } 
 
     /**
     * Realiza a inserção de autores no artigo
@@ -341,11 +300,118 @@ final class ArticleController
         ])->insert();            
         
         if ($articleAuthor->result()->status != 'success') {            
-            return ResponseController::message($response, 'error', $articleAuthor->result()->debug);                        
+            return ResponseController::message($response, 'error', $articleAuthor->result());                        
         }           
         return ResponseController::message($response, $articleAuthor->result()->status, 'Author inserted successfully');
     } 
 
+    /**
+    * Realiza a exclusão de um autor do artigo
+    *    
+    * @return Response
+    */
+    public function delAuthor(Request $request, Response $response, $args): Response
+    {                        
+        $articleID = $args['articleid'];
+        $userID = $args['authorid'];
+
+        if (empty($articleID) || empty($userID)) {
+            return ResponseController::message($response, 'error', 'Missing information');            
+        }        
+        
+        $authorDel = new ArticleAuthorsModel();
+        $authorDel->where("article = {$articleID} and user = {$userID}")                   
+                  ->delete();              
+                
+        if ($authorDel->result()->status != 'success') {            
+            return ResponseController::message($response, 'error', $authorDel->result()->message);                                   
+        }
+        return ResponseController::message($response, $authorDel->result()->status, 'Author delete successfully');
+    }
+
+    /**
+    * Realiza a inserção de revisor no artigo
+    *    
+    * @return Response
+    */
+    public function addAdvisor(Request $request, Response $response, $args): Response
+    {        
+        $parsedBody = $request->getParsedBody();
+
+        $article = $parsedBody['article'];
+        $advisor = $parsedBody['advisor'];   
+        $coadvisor = $parsedBody['coadvisor'];          
+
+        if (empty($article) || empty($advisor)) {                        
+            return ResponseController::message($response, 'error', 'Missing information');            
+        }       
+
+        $advisorAuthor = new ArticleAdvisorsModel();
+        $advisorAuthor->data([
+            'user' => $advisor,
+            'article' => $article,        
+            'is_coadvisor' => $coadvisor,     
+        ])->insert();            
+        
+        if ($advisorAuthor->result()->status != 'success') {            
+            return ResponseController::message($response, 'error', $advisorAuthor->result());                        
+        }           
+        return ResponseController::message($response, $advisorAuthor->result()->status, 'Advisor inserted successfully');
+    } 
+
+    /**
+    * Realiza a exclusão de um revisor do artigo
+    *    
+    * @return Response
+    */
+    public function delAdvisor(Request $request, Response $response, $args): Response
+    {                        
+        $articleID = $args['articleid'];
+        $advisorID = $args['advisorid'];
+
+        if (empty($articleID) || empty($advisorID)) {
+            return ResponseController::message($response, 'error', 'Missing information');            
+        }        
+        
+        $advisorDel = new ArticleAdvisorsModel();
+        $advisorDel->where("article = {$articleID} and user = {$advisorID}")                   
+                   ->delete();              
+                
+        if ($advisorDel->result()->status != 'success') {            
+            return ResponseController::message($response, 'error', $advisorDel->result()->message);                                   
+        }
+        return ResponseController::message($response, $advisorDel->result()->status, 'Advisor delete successfully');
+    }
+
+    /**
+    * Realiza a inserção de um comentário de revisão no artigo
+    *    
+    * @return Response
+    */
+    public function addComment(Request $request, Response $response, $args): Response
+    {        
+        $parsedBody = $request->getParsedBody();
+
+        $user = UserHelper::getUserInToken($request, 'id');
+        $article = $parsedBody['article'];
+        $comment = $parsedBody['comment'];          
+
+        if (empty($article) || empty($comment)) {                        
+            return ResponseController::message($response, 'error', 'Missing information');            
+        }
+
+        $articleComment = new ArticleCommentsModel();
+        $articleComment->data([
+            'user' => $user,
+            'article' => $article,
+            'comment' => $comment,           
+        ])->insert();            
+        
+        if ($articleComment->result()->status != 'success') {            
+            return ResponseController::message($response, 'error', $articleComment->result()->debug);                        
+        }           
+        return ResponseController::message($response, $articleComment->result()->status, 'Article comment inserted successfully');
+    }     
     
     /**
     * Realiza a inserção de um comentário de revisão no artigo

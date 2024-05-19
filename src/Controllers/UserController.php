@@ -149,7 +149,7 @@ final class UserController
     {                        
         $params = (object) $request->getQueryParams();     
      
-        if (UserHelper::checkUserRole($request, RoleModel::ADMIN) && $params->mode != 'author') {            
+        if (UserHelper::checkUserRole($request, RoleModel::ADMIN) && $params->mode != 'author' && $params->mode != 'advisor') {            
             return ResponseController::message($response, 'error', 'Operation denied! User is not admin'); 
         }              
 
