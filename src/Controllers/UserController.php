@@ -160,7 +160,7 @@ final class UserController
               ->where($condition)     
               ->orderby()
               ->get(true);                           
-
+        
         $data = [];
         foreach($users->result() as $user) {        
             $userID = $user['id'];                         
