@@ -107,13 +107,11 @@ final class ArticleController
         
         $user = UserHelper::getUserInToken($request, 'id');
         $event = $parsedBody['event'];
-        $title = $parsedBody['title'];        
-        $advisors = $parsedBody['advisors'];  
-        $co_advisors = $parsedBody['co_advisors'];             
+        $title = $parsedBody['title'];                
         $keywords = $parsedBody['keywords'];  
         $summary = $parsedBody['summary'];        
 
-        if (empty($event) || empty($title) || empty($advisors) || empty($keywords) || empty($summary)) {            
+        if (empty($event) || empty($title) || empty($keywords) || empty($summary)) {            
             return ResponseController::message($response, 'error', 'Missing information');            
         }       
         
@@ -127,9 +125,7 @@ final class ArticleController
         $article = new ArticleModel();
         $article->data([         
             'event' => $event,
-            'title' => $title, 
-            'advisors' => $advisors,
-            'co_advisors' => $co_advisors,
+            'title' => $title,             
             'keywords' => $keywords,
             'summary' => $summary,
             'status' => 1, // Status recebido

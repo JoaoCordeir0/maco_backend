@@ -9,9 +9,7 @@ class ArticleModel extends Opers {
     private $table = 'article';
     private $columns = [               
         'event:int:not null',    
-        'title:varchar(255):not null',         
-        'advisors:varchar(999):not null',                
-        'co_advisors:varchar(999):',                
+        'title:varchar(255):not null',                 
         'keywords:varchar(255):not null',
         'summary:text:not null',
         'status:int:not null',        
@@ -29,16 +27,6 @@ class ArticleModel extends Opers {
     public function getTitle() 
     {
         return parent::result()->title;
-    }   
-    
-    public function getAdvisors() 
-    {
-        return parent::result()->advisors;
-    }   
-    
-    public function getCoAdvisors() 
-    {
-        return parent::result()->co_advisors;
     }   
     
     public function getKeywords() 
