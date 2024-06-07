@@ -89,6 +89,6 @@ class ArticleHelper
         if (strlen($condition) > 5) {
             $condition = " and {$condition}";
         }
-        return "(article.status = 1 or article.status = 3) and ({$authorID} in (select user from article_authors where article_authors.article = article.id)) " . $condition;
-    }
+        return "({$authorID} in (select user from article_authors where article_authors.article = article.id)) " . $condition;
+    }   
 }
