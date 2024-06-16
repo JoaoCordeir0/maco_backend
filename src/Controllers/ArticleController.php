@@ -52,7 +52,7 @@ final class ArticleController
                 ->innerjoin('article_status on article.status = article_status.id')
                 ->innerjoin('event on article.event = event.id')         
                 ->where($condition)     
-                ->orderby()
+                ->orderby('id', 'DESC')
                 ->get(true);              
     
         $data = [];
