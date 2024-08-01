@@ -4,15 +4,12 @@ namespace MacoBackend\Models;
 
 use SimpleDB\Opers;
 
-class RoleModel extends Opers {
+class LogModel extends Opers {
 
-    const ADMIN = 1;
-    const ADVISOR = 2;
-    const AUTHOR = 3;
-
-    private $table = 'role';
+    private $table = 'log';
     private $columns = [     
-        'description:varchar(255):not null',         
+        'log:json:not null',
+        'area:varchar(255):not null',         
     ];
 
     public function __construct() {        
@@ -24,16 +21,21 @@ class RoleModel extends Opers {
         return parent::result()->id;
     }    
 
-    public function getDescription() 
+    public function getlog() 
     {
-        return parent::result()->description;
-    }       
+        return parent::result()->log;
+    }    
+    
+    public function getArea() 
+    {
+        return parent::result()->area;
+    }   
 
     public function getReturnID() 
     {
         return parent::result()->returnid;
     }
-    
+
     public function getCreatedAt() 
     {
         return parent::result()->created_at;

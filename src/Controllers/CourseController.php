@@ -2,10 +2,11 @@
 
 namespace MacoBackend\Controllers;
 
-use MacoBackend\Helpers\CourseHelper;
-use MacoBackend\Helpers\UserHelper;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use MacoBackend\Helpers\CourseHelper;
+use MacoBackend\Helpers\LogHelper;
+use MacoBackend\Helpers\UserHelper;
 use MacoBackend\Models\CourseModel;
 use MacoBackend\Models\RoleModel;
 use MacoBackend\Models\UserCourseModel;
@@ -78,7 +79,9 @@ final class CourseController
         $course->data([
             'name' => $name,
             'description' => $description,
-        ])->insert();              
+        ])->insert();        
+        
+        LogHelper::log('Course', 'add', $request);
         
         if ($course->result()->status != 'success') {    
             return ResponseController::message($response, 'error', $course->result()->message);         
@@ -114,6 +117,8 @@ final class CourseController
         $course->data(['name' => $name, 'description' => $description])
                ->where("id = {$id}")
                ->update();                    
+
+        LogHelper::log('Course', 'edit', $request);
 
         if ($course->result()->status != 'success') {    
             return ResponseController::message($response, 'error', $course->result()->message);         

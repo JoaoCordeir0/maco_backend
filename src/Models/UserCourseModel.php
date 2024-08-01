@@ -31,6 +31,11 @@ class UserCourseModel extends Opers {
         return parent::result()->course;
     }       
 
+    public function getReturnID() 
+    {
+        return parent::result()->returnid;
+    }
+    
     public function getCreatedAt() 
     {
         return parent::result()->created_at;

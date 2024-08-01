@@ -48,7 +48,7 @@ class ArticleModel extends Opers {
     {
         return parent::result()->returnid;
     }
-
+        
     public function getCreatedAt() 
     {
         return parent::result()->created_at;

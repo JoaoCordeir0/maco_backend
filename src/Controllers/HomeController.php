@@ -4,6 +4,7 @@ namespace MacoBackend\Controllers;
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use MacoBackend\Helpers\LogHelper;
 
 final class HomeController
 {
@@ -33,7 +34,9 @@ final class HomeController
     {               
         $response->getBody()->write(json_encode([
             'status' => 'ok'
-        ]));     
+        ]));   
+        
+        LogHelper::log('Ping', 'consult', $request);
         
         return $response;
     }  

@@ -6,6 +6,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use MacoBackend\Models\EventModel;
 use MacoBackend\Helpers\EventHelper;
+use MacoBackend\Helpers\LogHelper;
 use MacoBackend\Helpers\UserHelper;
 use MacoBackend\Models\RoleModel;
 
@@ -63,6 +64,8 @@ final class EventController
             'status' => $status,
         ])->insert();            
         
+        LogHelper::log('Event', 'add', $request);
+
         if ($event->getStatus() != 'success') {            
             return ResponseController::message($response, 'error', $event->debug());                        
         }           
@@ -97,6 +100,8 @@ final class EventController
         $event->data(['name' => $name, 'start' => $start, 'end' => $end, 'number_characters' => $number_characters, 'status' => $status])
               ->where("id = {$id}")
               ->update();             
+
+        LogHelper::log('Event', 'edit', $request);
 
         if ($event->getStatus() != 'success') {    
             return ResponseController::message($response, 'error', $event->result()->message);         

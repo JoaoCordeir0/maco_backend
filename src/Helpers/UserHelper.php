@@ -129,30 +129,34 @@ class UserHelper
      */
     public static function getUserInToken(Request $request, string $info): string
     {
-        $jwt = $request->getHeaderLine('Authorization');
-        $jwt = str_replace('Bearer', '', $jwt);
-        $jwt = str_replace(' ', '', $jwt);
-        
-        $user = JWT::decode($jwt, getenv('TOKEN_SECRET'), array_keys(JWT::$supported_algs));
-       
-        switch($info) {
-            case 'id':
-                return $user->id;
-                break;
-            case 'name':
-                return $user->name;
-                break;
-            case 'email':
-                return $user->email;
-                break;
-            case 'ra':
-                return $user->ra;
-                break;
-            case 'role':
-                return $user->role;
-                break;
-        }
-        return '';        
+        try {
+            $jwt = $request->getHeaderLine('Authorization');
+            $jwt = str_replace('Bearer', '', $jwt);
+            $jwt = str_replace(' ', '', $jwt);
+            
+            $user = JWT::decode($jwt, getenv('TOKEN_SECRET'), array_keys(JWT::$supported_algs));
+           
+            switch($info) {
+                case 'id':
+                    return $user->id;
+                    break;
+                case 'name':
+                    return $user->name;
+                    break;
+                case 'email':
+                    return $user->email;
+                    break;
+                case 'ra':
+                    return $user->ra;
+                    break;
+                case 'role':
+                    return $user->role;
+                    break;
+            }
+            return '';   
+        } catch(Exception $e) {
+            return '';
+        }             
     }
 
     /**

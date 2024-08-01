@@ -9,6 +9,7 @@ use MacoBackend\Services\Services;
 use MacoBackend\Helpers\UserHelper;
 use MacoBackend\Models\RoleModel;
 use MacoBackend\Models\UserCourseModel;
+use MacoBackend\Helpers\LogHelper;
 
 final class UserController
 {
@@ -32,8 +33,8 @@ final class UserController
         $user->select()        
              ->where("email = '{$email}'")
              ->limit(1)                        
-             ->get();  
-        
+             ->get();          
+
         if (isset($user->result()->id) && password_verify($password, $user->getPassword()))
         {                   
             $infoUser = array(
@@ -94,6 +95,8 @@ final class UserController
         $user_course = new UserCourseModel();
         $user_course->data(['user' => $user->result()->returnid, 'course' => $course])->insert(); 
 
+        LogHelper::log('User', 'add', $request);
+
         if ($user->result()->status == 'success' && $user_course->result()->status == 'success') {            
             return ResponseController::message($response, $user->result()->status, 'Registration completed successfully');         
         }        
@@ -127,6 +130,8 @@ final class UserController
              ->where("id = {$id}")
              ->update();    
 
+        LogHelper::log('User', 'edit', $request);
+
         if ($user->result()->status == 'success') {            
             return ResponseController::message($response, $user->result()->status, 'Update completed successfully');         
         }                
@@ -159,6 +164,8 @@ final class UserController
             // ...
             Services::sendMail('title email', 'html email', $user->getEmail(), $user->getName());           
         }  
+
+        LogHelper::log('User', 'recover_password', $request);
 
         return ResponseController::message($response, 'success', 'Email sent to ' . $email);          
     } 

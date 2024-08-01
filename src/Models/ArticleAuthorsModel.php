@@ -42,6 +42,11 @@ class ArticleAuthorsModel extends Opers {
         return parent::result()->status;
     }
 
+    public function getReturnID() 
+    {
+        return parent::result()->returnid;
+    }
+
     public function getCreatedAt() 
     {
         return parent::result()->created_at;
