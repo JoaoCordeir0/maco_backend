@@ -101,6 +101,39 @@ final class UserController
     }     
 
     /**
+    * Realiza a edição de um usuário
+    *    
+    * @return Response
+    */
+    public function edit(Request $request, Response $response)
+    {                           
+        $parsedBody = $request->getParsedBody();
+
+        $id = $parsedBody['id'];
+        unset($parsedBody['id']);
+
+        if ($parsedBody['password'] != '') {
+            $parsedBody['password'] = password_hash($parsedBody['password'], PASSWORD_DEFAULT);
+        } else {            
+            unset($parsedBody['password']);
+        }
+    
+        if (empty($id)) {                        
+            return ResponseController::message($response, 'error', 'Missing information');         
+        }
+
+        $user = new UserModel();    
+        $user->data($parsedBody)
+             ->where("id = {$id}")
+             ->update();    
+
+        if ($user->result()->status == 'success') {            
+            return ResponseController::message($response, $user->result()->status, 'Update completed successfully');         
+        }                
+        return ResponseController::message($response, 'error', $user->result()->message);                     
+    }     
+
+    /**
     * Realiza o envio da recuperação de senha caso o email do usuário for encontrado
     *    
     * @return Response
@@ -166,7 +199,7 @@ final class UserController
             $userID = $user['id'];                         
     
             $courses = new UserCourseModel();
-            $courses->select(['course.id', 'course.name', 'course.description'])
+            $courses->select(['course.id', 'course.name', 'course.description', 'user_course.created_at'])
                     ->innerjoin('course on course.id = user_course.course')
                     ->where("user = {$userID}")                    
                     ->get(true);

@@ -40,6 +40,21 @@ final class CourseController
     }   
 
     /**
+    * Realiza a listagem dos cursos para a pagina publica de cadastro
+    *    
+    * @return Response
+    */
+    public function listCoursesPublic(Request $request, Response $response, $args): Response
+    {                          
+        $course = new CourseModel();        
+        $course->select(['id', 'name'])                
+                ->orderby()
+                ->get(true);
+
+        return ResponseController::data($response, $course->result());
+    }   
+    
+    /**
     * Realiza a inserção de um curso
     *    
     * @return Response

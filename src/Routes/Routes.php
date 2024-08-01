@@ -7,13 +7,17 @@ use MacoBackend\Controllers\HomeController;
 use MacoBackend\Controllers\UserController;
 
 // Default route
-$app->get('/', [HomeController::class, 'home']);
-$app->get('/ping', [HomeController::class, 'ping']);
-$app->post('/token', [UserController::class, 'validToken']);
+$app->group('/public', function () use ($app) {    
+    $app->get('/public', [HomeController::class, 'home']);
+    $app->get('/public/ping', [HomeController::class, 'ping']);    
+    $app->get('/public/course/list', [CourseController::class, 'listCoursesPublic']); // Public course list           
+    $app->post('/public/token', [UserController::class, 'validToken']);
+});
 
 $app->group('/user', function () use ($app) {
     $app->post('/user/login', [UserController::class, 'login']); // Login   
     $app->post('/user/register', [UserController::class, 'register']); // Register   
+    $app->post('/user/edit', [UserController::class, 'edit']); // Edit   
     $app->post('/user/recoverpassword', [UserController::class, 'recoverPassword']); // Recover password
     $app->get('/user/list', [UserController::class, 'listUsers']); // User list       
 });
@@ -35,7 +39,7 @@ $app->group('/article', function () use ($app) {
     $app->delete('/article/reference/del/{articleid}/{refid}', [ArticleController::class, 'delReference']); // Article del        
 });
 
-$app->group('/course', function () use ($app) {
+$app->group('/course', function () use ($app) {    
     $app->get('/course/list', [CourseController::class, 'listCourses']); // Course list               
     $app->post('/course/add', [CourseController::class, 'addCourse']); // Course add
     $app->post('/course/edit', [CourseController::class, 'editCourse']); // Course edit    
