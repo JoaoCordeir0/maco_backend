@@ -1,0 +1,11 @@
+bank=mysql
+host=maco.cdym2ycw88em.sa-east-1.rds.amazonaws.com
+db=maco
+uid=root
+pwd=wiHqL^33q8HV2sd
+
+-- bank=mysql
+-- host=localhost
+-- db=maco
+-- uid=root
+-- pwd=1234

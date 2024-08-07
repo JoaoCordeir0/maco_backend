@@ -15,6 +15,7 @@ use MacoBackend\Models\ArticleModel;
 use MacoBackend\Models\ArticleReferencesModel;
 use MacoBackend\Models\RoleModel;
 use MacoBackend\Models\UserCourseModel;
+use MacoBackend\Services\DocxService;
 
 final class ArticleController
 {
@@ -478,18 +479,33 @@ final class ArticleController
     }
 
     /**
-     * Realiza o export do artigo para docx
+     * Realiza o export do artigo
      * 
      * @return Response
      */
-    public function export(Request $request, Response $response, $args): Response
+    public function export(Request $request, Response $response, $args)
     {
-        $params = (object) $request->getQueryParams();
-
-        $data = ArticleHelper::getArticle("article.id = {$params->article_id}");
+        $parsedBody = $request->getParsedBody();
         
-        LogHelper::log('Article', 'export_' . $params->export_type, $request);
+        $article = $parsedBody['article'];
+        $type = $parsedBody['type'];
+        
+        $data = (array) ArticleHelper::getArticle("article.id = {$article}");
+        
+        LogHelper::log('Article', 'export_' . $type, $request);
 
-        return ResponseController::data($response, (object) $data);
+        try {
+            switch($type) {
+                case 'docx':
+                    $docx = DocxService::exportDocx($data[0]);
+                    return ResponseController::data($response, (object) ['file' => $docx]);
+                    break;
+                default:         
+                    throw new Exception('Type export not informed');
+                    break;
+            }   
+        } catch(Exception $e) {
+            return ResponseController::message($response, 'error', 'Error generating file');
+        }                
     }
 }
