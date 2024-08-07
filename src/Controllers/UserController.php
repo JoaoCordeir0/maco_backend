@@ -5,11 +5,11 @@ namespace MacoBackend\Controllers;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use MacoBackend\Models\UserModel;
-use MacoBackend\Services\Services;
 use MacoBackend\Helpers\UserHelper;
 use MacoBackend\Models\RoleModel;
 use MacoBackend\Models\UserCourseModel;
 use MacoBackend\Helpers\LogHelper;
+use MacoBackend\Services\EmailService;
 
 final class UserController
 {
@@ -162,7 +162,7 @@ final class UserController
         {           
             // Cria logica do token e corpo do email
             // ...
-            Services::sendMail('title email', 'html email', $user->getEmail(), $user->getName());           
+            EmailService::sendMail('title email', 'html email', $user->getEmail(), $user->getName());           
         }  
 
         LogHelper::log('User', 'recover_password', $request);

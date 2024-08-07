@@ -23,8 +23,7 @@ $app->group('/user', function () use ($app) {
 });
 
 $app->group('/article', function () use ($app) {
-    $app->get('/article/list/{role}', [ArticleController::class, 'listArticles']); // Article list
-    $app->get('/article/export', [ArticleController::class, 'export']); // Article export
+    $app->get('/article/list/{role}', [ArticleController::class, 'listArticles']); // Article list    
     $app->post('/article/add', [ArticleController::class, 'addArticle']); // Article add     
     $app->post('/article/edit/data', [ArticleController::class, 'editArticle']); // Article title and summary       
     $app->post('/article/edit/status', [ArticleController::class, 'editStatus']); // Article update status        
@@ -34,6 +33,7 @@ $app->group('/article', function () use ($app) {
     $app->post('/article/add/advisor', [ArticleController::class, 'addAdvisor']); // Article add advisor        
     $app->post('/article/add/reference', [ArticleController::class, 'addReference']); // Article add reference
     $app->post('/article/edit/reference', [ArticleController::class, 'editReference']); // Article edit reference
+    $app->post('/article/export', [ArticleController::class, 'export']); // Article export
     $app->delete('/article/del/{articleid}', [ArticleController::class, 'delArticle']); // Article del        
     $app->delete('/article/author/del/{articleid}/{authorid}', [ArticleController::class, 'delAuthor']); // Article del        
     $app->delete('/article/advisor/del/{articleid}/{advisorid}', [ArticleController::class, 'delAdvisor']); // Article del        

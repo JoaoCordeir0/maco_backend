@@ -2,10 +2,9 @@
 
 namespace MacoBackend\Services;
 use PHPMailer\PHPMailer\PHPMailer;
-use \Firebase\JWT\JWT;
 use Exception;
 
-class Services
+class EmailService
 {    
     /**
      * Função que envia e-mail
@@ -15,10 +14,8 @@ class Services
      * @param $address
      * @param $name
      */
-    public static function sendMail(string $title, string $html, string $address, string $name)
-    {
-        try
-        {
+    public static function sendMail(string $title, string $html, string $address, string $name) {
+        try {
             $mail = new PHPMailer;
 
             $mail->isSMTP();
@@ -43,9 +40,7 @@ class Services
                 'status' => 'success',
                 'message' => 'Email successfully sent',
             ];
-        }
-        catch(Exception $e)                     
-        {
+        } catch(Exception $e) {
             return [
                 'status' => 'Error',
                 'message' => $e->getMessage(),
