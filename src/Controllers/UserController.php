@@ -113,20 +113,26 @@ final class UserController
         $parsedBody = $request->getParsedBody();
 
         $id = $parsedBody['id'];
-        unset($parsedBody['id']);
 
-        if ($parsedBody['password'] != '') {
-            $parsedBody['password'] = password_hash($parsedBody['password'], PASSWORD_DEFAULT);
-        } else {            
-            unset($parsedBody['password']);
-        }
-    
         if (empty($id)) {                        
             return ResponseController::message($response, 'error', 'Missing information');         
         }
+        
+        $data = [
+            'name' => $parsedBody['name'],
+            'cpf' => UserHelper::cleanDocument($parsedBody['cpf']),
+            'email' => $parsedBody['email'],            
+            'ra' => $parsedBody['ra'],
+            'role' => $parsedBody['role'],
+            'status' => $parsedBody['status'],
+        ];
+
+        if ($parsedBody['password'] != '') {
+            $data += ['password' => password_hash($parsedBody['password'], PASSWORD_DEFAULT)];
+        }
 
         $user = new UserModel();    
-        $user->data($parsedBody)
+        $user->data($data)
              ->where("id = {$id}")
              ->update();    
 

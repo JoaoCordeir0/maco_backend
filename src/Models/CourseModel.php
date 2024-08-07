@@ -11,6 +11,7 @@ class CourseModel extends Opers {
         'name:varchar(255):not null', 
         'description:text:',        
         'image:varchar(455):', 
+        'status:boolean:not null',
     ];
 
     public function __construct() {        
@@ -30,6 +31,11 @@ class CourseModel extends Opers {
     public function getDescription() 
     {
         return parent::result()->description;
+    }       
+
+    public function getStatus() 
+    {
+        return parent::result()->status;
     }       
 
     public function getReturnID() 

@@ -48,9 +48,10 @@ final class CourseController
     public function listCoursesPublic(Request $request, Response $response, $args): Response
     {                          
         $course = new CourseModel();        
-        $course->select(['id', 'name'])                
-                ->orderby()
-                ->get(true);
+        $course->select(['id', 'name'])         
+               ->where('status = 1')       
+               ->orderby()
+               ->get(true);
 
         return ResponseController::data($response, $course->result());
     }   
@@ -69,7 +70,8 @@ final class CourseController
         $parsedBody = $request->getParsedBody();
 
         $name = $parsedBody['name'];
-        $description = $parsedBody['description'];             
+        $description = $parsedBody['description'];    
+        $status = $parsedBody['status'];             
 
         if (empty($name) || empty($description)) {            
             return ResponseController::message($response, 'error', 'Missing information');         
@@ -79,6 +81,7 @@ final class CourseController
         $course->data([
             'name' => $name,
             'description' => $description,
+            'status' => $status,
         ])->insert();        
         
         LogHelper::log('Course', 'add', $request);
@@ -105,7 +108,8 @@ final class CourseController
 
         $id = $parsedBody['id'];
         $name = $parsedBody['name'];
-        $description = $parsedBody['description'];             
+        $description = $parsedBody['description'];
+        $status = $parsedBody['status'];             
 
         if (empty($id) || empty($name) || empty($description))
         {            
@@ -114,7 +118,7 @@ final class CourseController
         }
 
         $course = new CourseModel();
-        $course->data(['name' => $name, 'description' => $description])
+        $course->data(['name' => $name, 'description' => $description, 'status' => $status])
                ->where("id = {$id}")
                ->update();                    
 
