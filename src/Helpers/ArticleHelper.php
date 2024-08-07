@@ -2,6 +2,11 @@
 
 namespace MacoBackend\Helpers;
 
+use MacoBackend\Models\ArticleAdvisorsModel;
+use MacoBackend\Models\ArticleAuthorsModel;
+use MacoBackend\Models\ArticleCommentsModel;
+use MacoBackend\Models\ArticleModel;
+use MacoBackend\Models\ArticleReferencesModel;
 use MacoBackend\Models\UserCourseModel;
 
 class ArticleHelper
@@ -91,4 +96,59 @@ class ArticleHelper
         }
         return "({$authorID} in (select user from article_authors where article_authors.article = article.id)) " . $condition;
     }   
+
+    /**
+     * Função que pega todas as informações do artigo
+     * 
+     * @param $condition
+     */
+    public static function getArticle($condition): object
+    {
+        $article = new ArticleModel();       
+        $article->select(['article.*', 'article_status.name as status', 'event.name as event_name'])                                                
+                ->innerjoin('article_status on article.status = article_status.id')
+                ->innerjoin('event on article.event = event.id')         
+                ->where($condition)     
+                ->orderby('id', 'DESC')
+                ->get(true);              
+    
+        $data = [];
+        foreach($article->result() as $article) {        
+            $articleID = $article['id'];
+            
+            $comments = new ArticleCommentsModel();
+            $comments->select(['user.id as user_id', 'user.name as user_name', 'comment', 'article_comments.created_at'])
+                     ->innerjoin('user on user.id = article_comments.user')
+                     ->where("article_comments.article = {$articleID}")
+                     ->get(true);  
+
+            $authors = new ArticleAuthorsModel();
+            $authors->select(['user.id', 'user.name', 'user.cpf', 'user.email', 'user.ra', 'article_authors.course', 'course.name as course_name'])
+                    ->innerjoin('user on user.id = article_authors.user')
+                    ->innerjoin('course on course.id = article_authors.course')
+                    ->where("article = {$articleID}")
+                    ->orderby()
+                    ->get(true);    
+                    
+            $advisors = new ArticleAdvisorsModel();
+            $advisors->select(['user.id', 'user.name', 'user.cpf', 'user.email', 'user.ra', 'article_advisors.is_coadvisor'])
+                     ->innerjoin('user on user.id = article_advisors.user')                     
+                     ->where("article = {$articleID}")
+                     ->orderby()
+                     ->get(true);            
+            
+            $references = new ArticleReferencesModel();
+            $references->select(['id', 'reference'])
+                       ->where("article = {$articleID}")
+                       ->get(true);
+
+            array_push($data, array_merge($article, [
+                'authors' => $authors->result(),
+                'advisors' => $advisors->result(),
+                'comments' => $comments->result(),
+                'references' => $references->result(),
+            ]));                                 
+        }              
+        return (object) $data;
+    }
 }
