@@ -73,7 +73,7 @@ final class CourseController
         $description = $parsedBody['description'];    
         $status = $parsedBody['status'];             
 
-        if (empty($name) || empty($description)) {            
+        if (empty($name)) {            
             return ResponseController::message($response, 'error', 'Missing information');         
         }
 
