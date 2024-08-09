@@ -173,4 +173,19 @@ class UserHelper
             return false;
         }
     }
+
+    /**
+     * Função para gerar senhas aleatórias 
+     */
+    public static function generatePassword($lastname) {
+        $chars = 'ABCDEFGHIJKLMNOPQRSTUVYXWZabcdefghijklmnopqrstuvyxwz0123456789';
+
+        $pass = substr(str_shuffle($chars), 0, 6);
+            
+        $pass = $lastname . '.' . $pass;
+
+        $pass = preg_replace("/[^a-zA-Z0-9\-_.!*'()\/]/", "", $pass);
+
+        return $pass;
+    }
 }

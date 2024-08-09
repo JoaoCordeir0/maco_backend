@@ -165,10 +165,11 @@ final class UserController
              ->get();  
 
         if (isset($user->result()->id))
-        {           
-            // Cria logica do token e corpo do email
-            // ...
-            EmailService::sendMail('title email', 'html email', $user->getEmail(), $user->getName());           
+        {                       
+            $lastname = array_reverse(explode(' ', $user->getName()))[0];
+            $new_pass = UserHelper::generatePassword($lastname);     
+
+            # EmailService::sendMail('title email', 'html email', $user->getEmail(), $user->getName());           
         }  
 
         LogHelper::log('User', 'recover_password', $request);
