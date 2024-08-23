@@ -20,6 +20,7 @@ $app->group('/user', function () use ($app) {
     $app->post('/user/edit', [UserController::class, 'edit']); // Edit   
     $app->post('/user/recoverpassword', [UserController::class, 'recoverPassword']); // Recover password
     $app->get('/user/list', [UserController::class, 'listUsers']); // User list       
+    $app->post('/user/certificate/export', [UserController::class, 'export']); // Article export
 });
 
 $app->group('/article', function () use ($app) {

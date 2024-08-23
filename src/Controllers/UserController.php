@@ -2,6 +2,7 @@
 
 namespace MacoBackend\Controllers;
 
+use Exception;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use MacoBackend\Models\UserModel;
@@ -10,6 +11,7 @@ use MacoBackend\Models\RoleModel;
 use MacoBackend\Models\UserCourseModel;
 use MacoBackend\Helpers\LogHelper;
 use MacoBackend\Services\EmailService;
+use MacoBackend\Services\PDFService;
 
 final class UserController
 {
@@ -243,5 +245,24 @@ final class UserController
             return ResponseController::message($response, 'success', 'Valid token');                     
         }
         return ResponseController::message($response, 'error', 'Invalid token');    
+    }
+
+    /**
+     * Realiza o export do certificado
+     * 
+     * @return Response
+     */
+    public function export(Request $request, Response $response, $args)
+    {
+        $parsedBody = $request->getParsedBody();                                
+        
+        LogHelper::log('Article', 'export_pdf', $request);
+
+        try {
+            $pdf = PDFService::exportPDF();
+            return ResponseController::data($response, (object) ['file' => 'a']);        
+        } catch(Exception $e) {
+            return ResponseController::message($response, 'error', $e->getMessage());
+        }                
     }
 }
