@@ -499,7 +499,7 @@ final class ArticleController
             switch($type) {
                 case 'docx':
                     $docx = $docxService->exportDocx($data[0]);
-                    return ResponseController::data($response, (object) ['file' => $docx]);
+                    return ResponseController::data($response, (object) ['status' => 'success', 'file' => $docx]);
                     break;
                 default:         
                     throw new Exception('Type export not informed');

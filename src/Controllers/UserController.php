@@ -287,7 +287,7 @@ final class UserController
         try {
             $pdfService = new PDFService();
             $pdf = $pdfService->exportPDF($article[0]);
-            return ResponseController::data($response, (object) ['file' => $pdf]);        
+            return ResponseController::data($response, (object) ['status' => 'success', 'file' => $pdf]);        
         } catch(Exception $e) {
             return ResponseController::message($response, 'error', $e->getMessage());
         }                
