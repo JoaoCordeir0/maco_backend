@@ -2,30 +2,65 @@
 
 namespace MacoBackend\Services;
 use Exception;
-use MacoBackend\Helpers\FileHelper;
 use Dompdf\Dompdf;
+use Dompdf\Options;
+use MacoBackend\Helpers\FileHelper;
+use MacoBackend\Helpers\UserHelper;
 
 class PDFService
 {    
+    private $path = 'tmp/pdf/';
+    
     /**
      * Função que exporta para PDF
      * 
      * @param $data
      */
-    public static function exportPDF()
+    public function exportPDF($data): string
     {
-        try {
-            $dompdf = new Dompdf();
+        try {            
+            $options = new Options();
+            $options->set('isRemoteEnabled', true);
 
-            $dompdf->loadHtml('<!DOCTYPE html><html lang="en"><head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>Document</title> <style> .layout { width: 100%; text-align: center; margin: auto; } .layout-text { max-width: 900px; margin: -650px auto; line-height: 3.5em } .unifae-text { font-size: 30px; } </style></head><body> <div class="layout"> <img src="https://macodocumentation.s3.sa-east-1.amazonaws.com/layout-certificado.png" /> <div class="layout-text"> <p class="unifae-text"> O Centro Universitário das Faculdades Associadas de Ensino - UNIFAE, no uso das suas atribuições certifica que <br> <b>João Victor Cordeiro</b>, <br> participou do(a) V Jornada de Evidências Científicas da UNIFAE - VII Jornada de Iniciação Científica da UNIFAE e III Mostra de Jogos da UNIFAE, promovido pelo(a) Propeq, com carga horária de 01:00:00 <br> São João da Boa Vista, 31 de maio de 2023 </p> </div> </div></body></html>');
-            $dompdf->setPaper('A4');
+            $dompdf = new Dompdf($options);
+
+            $html = $this->getHTML($data);
+
+            $dompdf->loadHtml($html);
+            $dompdf->setPaper('A4', 'landscape');
 
             $dompdf->render();
 
-            $dompdf->stream("teste.pdf");
-        }
-        catch(Exception $e) {
+            FileHelper::delFiles($this->path);
+
+            $pdf = $this->path . 'Certificate-' . UserHelper::getInitialsOfName($data['authors']['name']) . '-' . FileHelper::formatFileName($data['title']) . '.pdf';
+            file_put_contents($pdf, $dompdf->output());
+
+            return $pdf;
+        } catch(Exception $e) {
             throw $e;
         }
-    }            
+    }         
+    
+    /**
+     * Carrega o html e faz os replace nas informações
+     * 
+     * @param $data
+     */
+    public function getHTML($data): string
+    {
+        setlocale(LC_TIME, 'pt_BR.UTF-8');                
+
+        $html = file_get_contents('./layout-certificate/certificate.html');
+
+        $html = str_replace('{{student}}', $data['authors']['name'], $html);
+
+        $html = str_replace('{{event}}', $data['event_name'], $html);
+
+        $html = str_replace('{{article}}', $data['title'], $html);
+                
+        $html = str_replace('{{date}}', strftime('%d de %B de %Y'), $html);
+        
+        return $html;
+    }
 }

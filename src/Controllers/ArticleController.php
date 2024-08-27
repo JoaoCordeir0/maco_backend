@@ -495,9 +495,10 @@ final class ArticleController
         LogHelper::log('Article', 'export_' . $type, $request);
 
         try {
+            $docxService = new DocxService();
             switch($type) {
                 case 'docx':
-                    $docx = DocxService::exportDocx($data[0]);
+                    $docx = $docxService->exportDocx($data[0]);
                     return ResponseController::data($response, (object) ['file' => $docx]);
                     break;
                 default:         

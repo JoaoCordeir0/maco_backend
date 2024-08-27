@@ -26,7 +26,7 @@ final class FileHelper
     {
         $files = scandir($dir);
         foreach ($files as $file) {
-            unlink('tmp/' . $file);
+            unlink($dir . $file);
         }
     }
 }

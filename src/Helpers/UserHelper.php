@@ -188,4 +188,16 @@ class UserHelper
 
         return $pass;
     }
+
+    public static function getInitialsOfName($name): string 
+    {
+        $name = explode(' ', $name);
+
+        $initials = '';
+        foreach($name as $i) {
+            $initials .= $i[0];
+        }
+        
+        return $initials;
+    }
 }

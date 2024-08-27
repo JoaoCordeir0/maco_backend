@@ -7,13 +7,15 @@ use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\IOFactory;
 
 class DocxService
-{    
+{   
+    private $path = 'tmp/docx/'; 
+
     /**
      * Função que exporta para docx
      * 
      * @param $data
      */
-    public static function exportDocx($data): string 
+    public function exportDocx($data): string 
     {
         try {
             $article = (object) $data;
@@ -26,16 +28,15 @@ class DocxService
             $section->addLine();
             $section->addText($article->summary);
             
-            $docx = 'tmp/' . FileHelper::formatFileName($article->title) . '.docx';
-
-            FileHelper::delFiles('tmp/');
+            FileHelper::delFiles($this->path);
+            
+            $docx = $this->path . FileHelper::formatFileName($article->title) . '.docx';            
 
             $writer = IOFactory::createWriter($phpWord, 'Word2007');
             $writer->save($docx);
 
             return $docx;
-        }
-        catch(Exception $e) {
+        } catch(Exception $e) {
             throw $e;
         }
     }            

@@ -3,6 +3,7 @@
 namespace MacoBackend\Controllers;
 
 use Exception;
+use MacoBackend\Helpers\ArticleHelper;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use MacoBackend\Models\UserModel;
@@ -256,11 +257,37 @@ final class UserController
     {
         $parsedBody = $request->getParsedBody();                                
         
+        $article = $parsedBody['article'];
+        $user = $parsedBody['user'];           
+
+        if (empty($article) || empty($user)) {                        
+            return ResponseController::message($response, 'error', 'Missing information');         
+        }    
+
+        $article = (array) ArticleHelper::getArticle("article.id = {$article}");
+        
+        if ($article[0]['status'] != 'finished') {            
+            return ResponseController::message($response, 'error', 'Article not finished');
+        }
+
+        $userInArticle = false;
+        foreach((array) $article[0]['authors'] as $author) {
+            if ($user == $author['id']) {
+                $userInArticle = true;
+                $article[0]['authors'] = $author;
+            }
+        }                
+        
+        if (! $userInArticle) {
+            return ResponseController::message($response, 'error', 'User not in article');
+        }
+        
         LogHelper::log('Article', 'export_pdf', $request);
 
         try {
-            $pdf = PDFService::exportPDF();
-            return ResponseController::data($response, (object) ['file' => 'a']);        
+            $pdfService = new PDFService();
+            $pdf = $pdfService->exportPDF($article[0]);
+            return ResponseController::data($response, (object) ['file' => $pdf]);        
         } catch(Exception $e) {
             return ResponseController::message($response, 'error', $e->getMessage());
         }                
