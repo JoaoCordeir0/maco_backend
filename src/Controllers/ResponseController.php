@@ -20,7 +20,7 @@ class ResponseController
     {
         $response->getBody()->write(json_encode([
             'status' => $status, 
-            'message' => $message,
+            'message' => self::filter($message),
         ]));
 
         return $response;
@@ -37,5 +37,21 @@ class ResponseController
         $response->getBody()->write(json_encode($data));
 
         return $response;
+    }
+
+
+    /**
+     * Metodo que filtra as mensagens de erros
+     * 
+     * @param $response
+     * @param $data
+     */
+    public static function filter(string $message): string
+    {        
+        if (str_contains($message, 'Duplicate entry')) {
+            $explode = explode("'", $message);
+            $message = 'Informação já cadastrada: ' . $explode[1];            
+        }    
+        return $message;
     }
 }

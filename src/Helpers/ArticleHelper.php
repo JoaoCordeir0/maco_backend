@@ -127,14 +127,14 @@ class ArticleHelper
                     ->innerjoin('user on user.id = article_authors.user')
                     ->innerjoin('course on course.id = article_authors.course')
                     ->where("article = {$articleID}")
-                    ->orderby()
+                    ->orderby('article_authors.id', 'ASC')
                     ->get(true);    
                     
             $advisors = new ArticleAdvisorsModel();
             $advisors->select(['user.id', 'user.name', 'user.cpf', 'user.email', 'user.ra', 'article_advisors.is_coadvisor'])
                      ->innerjoin('user on user.id = article_advisors.user')                     
                      ->where("article = {$articleID}")
-                     ->orderby()
+                     ->orderby('article_advisors.id', 'ASC')
                      ->get(true);            
             
             $references = new ArticleReferencesModel();
