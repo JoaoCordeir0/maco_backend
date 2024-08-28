@@ -2,6 +2,8 @@
 
 namespace MacoBackend\Helpers;
 
+use MacoBackend\Models\CourseModel;
+
 class CourseHelper
 {    
     /**
@@ -18,5 +20,20 @@ class CourseHelper
             return "name like '%" . $params->course_name . "%'";
         }
         return '';       
-    }    
+    }
+    
+    /**
+     * Pega o nome do curso pelo id
+     * 
+     * @param $id
+     */
+    public static function getCourseByID($id)
+    {
+        $course = new CourseModel();        
+        $course->select(['name'])         
+               ->where("id = $id")                      
+               ->get();
+
+        return $course->getName();
+    }
 }
