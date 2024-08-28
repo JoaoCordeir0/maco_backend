@@ -48,10 +48,12 @@ final class EventController
         $name = $parsedBody['name'];
         $start = $parsedBody['start'];          
         $end = $parsedBody['end'];          
-        $number_characters = $parsedBody['number_characters'];          
+        $number_characters = $parsedBody['number_characters'];
+        $number_keywords = $parsedBody['number_keywords'];
+        $instructions = $parsedBody['instructions'];          
         $status = $parsedBody['status'];          
 
-        if (empty($name) || empty($start) || empty($end) || empty($number_characters)) {                        
+        if (empty($name) || empty($start) || empty($end) || empty($number_characters) || empty($number_keywords) || empty($instructions)) {                        
             return ResponseController::message($response, 'error', 'Missing information');            
         }
 
@@ -61,6 +63,8 @@ final class EventController
             'start' => $start,
             'end' => $end,           
             'number_characters' => $number_characters,
+            'number_keywords' => $number_keywords,
+            'instructions' => $instructions,
             'status' => $status,
         ])->insert();            
         
@@ -90,16 +94,25 @@ final class EventController
         $start = $parsedBody['start'];          
         $end = $parsedBody['end'];          
         $number_characters = $parsedBody['number_characters'];          
+        $number_keywords = $parsedBody['number_keywords'];
+        $instructions = $parsedBody['instructions'];          
         $status = $parsedBody['status'];          
 
-        if (empty($id) || empty($name) || empty($start) || empty($end) || empty($number_characters)) {                        
+        if (empty($name) || empty($start) || empty($end) || empty($number_characters) || empty($number_keywords) || empty($instructions)) {                        
             return ResponseController::message($response, 'error', 'Missing information');            
         }
 
         $event = new EventModel();
-        $event->data(['name' => $name, 'start' => $start, 'end' => $end, 'number_characters' => $number_characters, 'status' => $status])
-              ->where("id = {$id}")
-              ->update();             
+        $event->data([
+            'name' => $name, 
+            'start' => $start, 
+            'end' => $end, 
+            'number_characters' => $number_characters, 
+            'number_keywords' => $number_keywords, 
+            'instructions' => $instructions, 
+            'status' => $status,
+        ])->where("id = {$id}")
+          ->update();             
 
         LogHelper::log('Event', 'edit', $request);
 
