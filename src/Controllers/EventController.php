@@ -48,12 +48,12 @@ final class EventController
         $name = $parsedBody['name'];
         $start = $parsedBody['start'];          
         $end = $parsedBody['end'];          
-        $number_characters = $parsedBody['number_characters'];
+        $number_words = $parsedBody['number_words'];
         $number_keywords = $parsedBody['number_keywords'];
         $instructions = $parsedBody['instructions'];          
         $status = $parsedBody['status'];          
 
-        if (empty($name) || empty($start) || empty($end) || empty($number_characters) || empty($number_keywords) || empty($instructions)) {                        
+        if (empty($name) || empty($start) || empty($end) || empty($number_words) || empty($number_keywords) || empty($instructions)) {                        
             return ResponseController::message($response, 'error', 'Missing information');            
         }
 
@@ -62,7 +62,7 @@ final class EventController
             'name' => $name,
             'start' => $start,
             'end' => $end,           
-            'number_characters' => $number_characters,
+            'number_words' => $number_words,
             'number_keywords' => $number_keywords,
             'instructions' => $instructions,
             'status' => $status,
@@ -93,12 +93,12 @@ final class EventController
         $name = $parsedBody['name'];
         $start = $parsedBody['start'];          
         $end = $parsedBody['end'];          
-        $number_characters = $parsedBody['number_characters'];          
+        $number_words = $parsedBody['number_words'];          
         $number_keywords = $parsedBody['number_keywords'];
         $instructions = $parsedBody['instructions'];          
         $status = $parsedBody['status'];          
 
-        if (empty($name) || empty($start) || empty($end) || empty($number_characters) || empty($number_keywords) || empty($instructions)) {                        
+        if (empty($name) || empty($start) || empty($end) || empty($number_words) || empty($number_keywords) || empty($instructions)) {                        
             return ResponseController::message($response, 'error', 'Missing information');            
         }
 
@@ -107,7 +107,7 @@ final class EventController
             'name' => $name, 
             'start' => $start, 
             'end' => $end, 
-            'number_characters' => $number_characters, 
+            'number_words' => $number_words, 
             'number_keywords' => $number_keywords, 
             'instructions' => $instructions, 
             'status' => $status,

@@ -11,7 +11,7 @@ class EventModel extends Opers {
         'name:varchar(255):not null', 
         'start:datetime:not null',
         'end:datetime:not null',
-        'number_characters:int:',    
+        'number_words:int:',    
         'number_keywords:int:',
         'instructions:text:',    
         'status:boolean:not null', 
@@ -41,9 +41,9 @@ class EventModel extends Opers {
         return parent::result()->end;
     }  
 
-    public function getNumberCharacters() 
+    public function getNumberWords() 
     {
-        return parent::result()->number_characters;
+        return parent::result()->number_words;
     }       
 
     public function getNumberKeywords()
