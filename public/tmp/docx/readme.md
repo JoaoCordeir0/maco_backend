@@ -1,0 +1,1 @@
+# Docx temporários
