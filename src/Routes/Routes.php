@@ -5,6 +5,7 @@ use MacoBackend\Controllers\CourseController;
 use MacoBackend\Controllers\EventController;
 use MacoBackend\Controllers\HomeController;
 use MacoBackend\Controllers\UserController;
+use MacoBackend\Controllers\ReportController;
 
 // Default route
 $app->group('/public', function () use ($app) {    
@@ -51,4 +52,8 @@ $app->group('/event', function () use ($app) {
     $app->get('/event/list', [EventController::class, 'listEvents']); // Event list    
     $app->post('/event/add', [EventController::class, 'addEvent']); // Event add                       
     $app->post('/event/edit', [EventController::class, 'editEvent']); // Event edit
+});
+
+$app->group('/report', function () use ($app) {
+    $app->get('/report/logs', [ReportController::class, 'listLogs']); // Logs list        
 });
