@@ -24,6 +24,7 @@ final class ReportController
         $logs = new LogModel();
         $logs->select()             
              ->orderby('id', 'DESC')
+             ->limit(50)
              ->get(true);
         
         return ResponseController::data($response, $logs->result());
