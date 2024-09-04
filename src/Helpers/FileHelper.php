@@ -26,7 +26,9 @@ final class FileHelper
     {
         $files = scandir($dir);
         foreach ($files as $file) {
-            unlink($dir . $file);
+            if ($file != 'readme.md') {
+                unlink($dir . $file);
+            }
         }
     }
 }

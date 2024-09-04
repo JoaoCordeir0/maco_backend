@@ -55,5 +55,6 @@ $app->group('/event', function () use ($app) {
 });
 
 $app->group('/report', function () use ($app) {
-    $app->get('/report/logs', [ReportController::class, 'listLogs']); // Logs list        
+    $app->get('/report/logs', [ReportController::class, 'listLogs']); // Logs list  
+    $app->get('/report/submissions-by-event', [ReportController::class, 'listSubmissionsByEvent']); // List submissions by event   
 });
