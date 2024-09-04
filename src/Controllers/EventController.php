@@ -114,7 +114,7 @@ final class EventController
         ])->where("id = {$id}")
           ->update();             
 
-        LogHelper::log('Evento', 'Adição de evento', $request);
+        LogHelper::log('Evento', 'Edição de evento', $request);
 
         if ($event->getStatus() != 'success') {    
             return ResponseController::message($response, 'error', $event->result()->message);         
