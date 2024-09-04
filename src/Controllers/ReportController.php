@@ -46,7 +46,7 @@ final class ReportController
         $events = new EventModel();
         $events->select()             
                ->orderby('id', 'DESC')
-               ->limit(10)
+               ->limit(6)
                ->get(true);
 
         $data = [];
