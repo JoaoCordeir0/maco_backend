@@ -98,7 +98,7 @@ final class UserController
         $user_course = new UserCourseModel();
         $user_course->data(['user' => $user->result()->returnid, 'course' => $course])->insert(); 
 
-        LogHelper::log('User', 'add', $request);
+        LogHelper::log('Usuário', 'Cadastro de usuário', $request);
 
         if ($user->result()->status == 'success' && $user_course->result()->status == 'success') {            
             return ResponseController::message($response, $user->result()->status, 'Registration completed successfully');         
@@ -139,7 +139,7 @@ final class UserController
              ->where("id = {$id}")
              ->update();    
 
-        LogHelper::log('User', 'edit', $request);
+        LogHelper::log('Usuário', 'Edição de usuário', $request);
 
         if ($user->result()->status == 'success') {            
             return ResponseController::message($response, $user->result()->status, 'Update completed successfully');         
@@ -175,7 +175,7 @@ final class UserController
             # EmailService::sendMail('title email', 'html email', $user->getEmail(), $user->getName());           
         }  
 
-        LogHelper::log('User', 'recover_password', $request);
+        LogHelper::log('Usuário', 'Recuperação de senha', $request);
 
         return ResponseController::message($response, 'success', 'Email sent to ' . $email);          
     } 
@@ -282,7 +282,7 @@ final class UserController
             return ResponseController::message($response, 'error', 'User not in article');
         }
         
-        LogHelper::log('Article', 'export_pdf', $request);
+        LogHelper::log('Artigo', 'Exportação do certificado para PDF', $request);
 
         try {
             $pdfService = new PDFService();

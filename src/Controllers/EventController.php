@@ -68,7 +68,7 @@ final class EventController
             'status' => $status,
         ])->insert();            
         
-        LogHelper::log('Event', 'add', $request);
+        LogHelper::log('Evento', 'Adição de evento', $request);
 
         if ($event->getStatus() != 'success') {            
             return ResponseController::message($response, 'error', $event->debug());                        
@@ -114,7 +114,7 @@ final class EventController
         ])->where("id = {$id}")
           ->update();             
 
-        LogHelper::log('Event', 'edit', $request);
+        LogHelper::log('Evento', 'Adição de evento', $request);
 
         if ($event->getStatus() != 'success') {    
             return ResponseController::message($response, 'error', $event->result()->message);         

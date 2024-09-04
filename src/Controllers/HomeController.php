@@ -36,7 +36,7 @@ final class HomeController
             'status' => 'ok'
         ]));   
         
-        LogHelper::log('Ping', 'consult', $request);
+        LogHelper::log('Ping', 'Ping na aplicação', $request);
         
         return $response;
     }  

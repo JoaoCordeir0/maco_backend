@@ -84,7 +84,7 @@ final class CourseController
             'status' => $status,
         ])->insert();        
         
-        LogHelper::log('Course', 'add', $request);
+        LogHelper::log('Curso', 'Adição de curso', $request);
         
         if ($course->result()->status != 'success') {    
             return ResponseController::message($response, 'error', $course->result()->message);         
@@ -122,7 +122,7 @@ final class CourseController
                ->where("id = {$id}")
                ->update();                    
 
-        LogHelper::log('Course', 'edit', $request);
+        LogHelper::log('Curso', 'Edição de curso', $request);
 
         if ($course->result()->status != 'success') {    
             return ResponseController::message($response, 'error', $course->result()->message);         

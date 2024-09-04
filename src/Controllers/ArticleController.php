@@ -100,7 +100,7 @@ final class ArticleController
             'course' => $userCourse->getCourse(),
         ])->insert();
         
-        LogHelper::log('Article', 'add_article', $request);
+        LogHelper::log('Artigo', 'Adição de artigo', $request);
 
         if ($article->result()->status != 'success' || $author->result()->status != 'success') {                            
             return ResponseController::message($response, 'error', $article->result()->message);
@@ -133,7 +133,7 @@ final class ArticleController
                       ->where("id = {$article}")
                       ->update();              
                 
-        LogHelper::log('Article', 'edit_status', $request);
+        LogHelper::log('Artigo', 'Edição de status de artigo', $request);
 
         if ($articleStatus->result()->status != 'success') {            
             return ResponseController::message($response, 'error', $articleStatus->result()->message);                                   
@@ -163,7 +163,7 @@ final class ArticleController
                     ->where("id = {$article}")
                     ->update();              
                 
-        LogHelper::log('Article', 'edit_article', $request);
+        LogHelper::log('Artigo', 'Edição do artigo', $request);
         
         if ($articleEdit->result()->status != 'success') {            
             return ResponseController::message($response, 'error', $articleEdit->result()->message);                                   
@@ -192,7 +192,7 @@ final class ArticleController
                     ->where("id = {$article}")
                     ->update();              
                 
-        LogHelper::log('Article', 'edit_keywords', $request);
+        LogHelper::log('Artigo', 'Edição de palavras chaves', $request);
 
         if ($articleKeys->result()->status != 'success') {            
             return ResponseController::message($response, 'error', $articleKeys->result()->message);                                   
@@ -229,7 +229,7 @@ final class ArticleController
         $articleDel->where("id = {$articleID} and status = 1")                   
                    ->delete();                            
                 
-        LogHelper::log('Article', 'del_article', $request);
+        LogHelper::log('Artigo', 'Exclusão de artigo', $request);
 
         if ($authorDel->getStatus() != 'success' && $advisorDel->getStatus() != 'success' && $referenceDel->getStatus() != 'success' && $articleDel->getStatus() != 'success') {            
             return ResponseController::message($response, 'error', $articleDel->result()->message);                                   
@@ -267,7 +267,7 @@ final class ArticleController
             'course' => $authorCourse->getCourse(),           
         ])->insert();            
         
-        LogHelper::log('Article', 'add_author', $request);
+        LogHelper::log('Artigo', 'Adição de autor', $request);
 
         if ($articleAuthor->result()->status != 'success') {            
             return ResponseController::message($response, 'error', $articleAuthor->result());                        
@@ -293,7 +293,7 @@ final class ArticleController
         $authorDel->where("article = {$articleID} and user = {$userID}")                   
                   ->delete();              
                 
-        LogHelper::log('Article', 'del_author', $request);
+        LogHelper::log('Artigo', 'Remoção de autor', $request);
 
         if ($authorDel->result()->status != 'success') {            
             return ResponseController::message($response, 'error', $authorDel->result()->message);                                   
@@ -325,7 +325,7 @@ final class ArticleController
             'is_coadvisor' => $coadvisor,     
         ])->insert();            
         
-        LogHelper::log('Article', 'add_advisor', $request);
+        LogHelper::log('Artigo', 'Adição de revisor', $request);
 
         if ($advisorAuthor->result()->status != 'success') {            
             return ResponseController::message($response, 'error', $advisorAuthor->result());                        
@@ -351,7 +351,7 @@ final class ArticleController
         $advisorDel->where("article = {$articleID} and user = {$advisorID}")                   
                    ->delete();              
                 
-        LogHelper::log('Article', 'del_advisor', $request);
+        LogHelper::log('Artigo', 'Remoção de revisor', $request);
 
         if ($advisorDel->result()->status != 'success') {            
             return ResponseController::message($response, 'error', $advisorDel->result()->message);                                   
@@ -383,7 +383,7 @@ final class ArticleController
             'comment' => $comment,           
         ])->insert();            
         
-        LogHelper::log('Article', 'add_comment', $request);
+        LogHelper::log('Artigo', 'Adição de comentário', $request);
 
         if ($articleComment->result()->status != 'success') {            
             return ResponseController::message($response, 'error', $articleComment->result()->debug);                        
@@ -413,7 +413,7 @@ final class ArticleController
             'reference' => $reference,           
         ])->insert();            
         
-        LogHelper::log('Article', 'add_reference', $request);
+        LogHelper::log('Artigo', 'Adição de referências', $request);
 
         if ($articleRef->result()->status != 'success') {            
             return ResponseController::message($response, 'error', $articleRef->result()->debug);                        
@@ -439,7 +439,7 @@ final class ArticleController
         $articleRef->where("article = {$article} and id = {$refID}")
                    ->delete();            
         
-        LogHelper::log('Article', 'del_reference', $request);
+        LogHelper::log('Artigo', 'Remoção de referências', $request);
 
         if ($articleRef->result()->status != 'success') {            
             return ResponseController::message($response, 'error', $articleRef->result()->debug);                        
@@ -470,7 +470,7 @@ final class ArticleController
                     ->where("id = {$refID} and article = {$article}")
                     ->update();              
                 
-        LogHelper::log('Article', 'edit_reference', $request);
+        LogHelper::log('Artigo', 'Edição de referências', $request);
 
         if ($articleKeys->result()->status != 'success') {            
             return ResponseController::message($response, 'error', $articleKeys->result()->message);                                   
@@ -492,7 +492,7 @@ final class ArticleController
         
         $data = (array) ArticleHelper::getArticle("article.id = {$article}");
         
-        LogHelper::log('Article', 'export_' . $type, $request);
+        LogHelper::log('Artigo', 'Exportação para ' . strtoupper($type), $request);
 
         try {
             $docxService = new DocxService();
