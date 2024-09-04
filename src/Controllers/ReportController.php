@@ -26,7 +26,7 @@ final class ReportController
         $logs = new LogModel();
         $logs->select()             
              ->orderby('id', 'DESC')
-             ->limit(50)
+             ->limit(100)
              ->get(true);
         
         return ResponseController::data($response, $logs->result());
@@ -53,7 +53,7 @@ final class ReportController
         foreach($events->result() as $event) {    
             $articles = new ArticleModel();
             $articles->select(['id'])
-                     ->where("event = " . $event['id'])
+                     ->where("event = " . $event['id'] . " and status > 1")
                      ->get();
 
             array_push($data, [
