@@ -203,6 +203,10 @@ final class UserController
             return ResponseController::message($response, 'error', 'Operation denied! User is not admin'); 
         }              
 
+        if ($params->mode == 'author' && UserHelper::getUserInToken($request, 'id') != $params->user_id) {
+            return ResponseController::message($response, 'error', 'Operation denied!'); 
+        }
+
         $condition = UserHelper::conditionByList($params);
 
         $users = new UserModel();
