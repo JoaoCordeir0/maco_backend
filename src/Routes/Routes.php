@@ -22,6 +22,8 @@ $app->group('/user', function () use ($app) {
     $app->post('/user/recoverpassword', [UserController::class, 'recoverPassword']); // Recover password
     $app->get('/user/list', [UserController::class, 'listUsers']); // User list       
     $app->post('/user/certificate/export', [UserController::class, 'export']); // Article export
+    $app->post('/user/add/course', [UserController::class, 'addCourse']); // User add course       
+    $app->delete('/user/remove/course/{userid}/{courseid}', [UserController::class, 'removeCourse']); // User remove course      
 });
 
 $app->group('/article', function () use ($app) {

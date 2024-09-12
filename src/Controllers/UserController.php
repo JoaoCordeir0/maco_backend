@@ -121,6 +121,15 @@ final class UserController
             return ResponseController::message($response, 'error', 'Missing information');         
         }
         
+        $user_role = new UserModel();
+        $user_role->select(['role'])
+                  ->where("id = {$id}")
+                  ->get();
+        
+        if ($parsedBody['role'] < $user_role->result()->role) {
+            return ResponseController::message($response, 'error', 'Operation denied!'); 
+        }        
+
         $data = [
             'name' => $parsedBody['name'],
             'cpf' => UserHelper::cleanDocument($parsedBody['cpf']),
@@ -203,7 +212,7 @@ final class UserController
             return ResponseController::message($response, 'error', 'Operation denied! User is not admin'); 
         }              
 
-        if ($params->mode == 'author' && UserHelper::getUserInToken($request, 'id') != $params->user_id) {
+        if ((($params->mode == 'author' || $params->mode == 'advisor') && $params->user_info == '') && UserHelper::getUserInToken($request, 'id') != $params->user_id) {
             return ResponseController::message($response, 'error', 'Operation denied!'); 
         }
 
@@ -296,4 +305,65 @@ final class UserController
             return ResponseController::message($response, 'error', $e->getMessage());
         }                
     }
+
+    /**
+    * Realiza a adição de um curso ao usuário
+    *    
+    * @return Response
+    */
+    public function addCourse(Request $request, Response $response, $args): Response
+    {                        
+        $parsedBody = $request->getParsedBody();
+
+        $user = $parsedBody['user'];
+        $course = $parsedBody['course'];
+
+        if (UserHelper::checkUserRole($request, RoleModel::ADMIN)) {            
+            return ResponseController::message($response, 'error', 'Operation denied!'); 
+        }           
+        
+        if (empty($user) || empty($course)) {                        
+            return ResponseController::message($response, 'error', 'Missing information');         
+        }   
+                
+        $user_course = new UserCourseModel();
+        $user_course->data(['user' => $user, 'course' => $course])->insert(); 
+
+        LogHelper::log('Usuário', 'Vinculação de curso no usuário', $request);
+
+        if ($user_course->result()->status == 'success') {            
+            return ResponseController::message($response, $user_course->result()->status, 'Course registred success');         
+        }        
+        return ResponseController::message($response, 'error', $user_course->result()->debug);    
+    }  
+
+    /**
+    * Realiza a remoção de um curso do usuário
+    *    
+    * @return Response
+    */
+    public function removeCourse(Request $request, Response $response, $args): Response
+    {                        
+        $user = $args['userid'];
+        $course = $args['courseid'];          
+
+        if (UserHelper::checkUserRole($request, RoleModel::ADMIN)) {            
+            return ResponseController::message($response, 'error', 'Operation denied!'); 
+        }    
+
+        if (empty($user) || empty($course)) {                        
+            return ResponseController::message($response, 'error', 'Missing information');            
+        }
+
+        $user_course = new UserCourseModel();
+        $user_course->where("user = {$user} and course = {$course}")
+                    ->delete();            
+        
+        LogHelper::log('Usuário', 'Remoção de curso do usuário', $request);
+
+        if ($user_course->result()->status == 'success') {            
+            return ResponseController::message($response, $user_course->result()->status, 'Course removed success');                           
+        }           
+        return ResponseController::message($response, 'error', $user_course->result()->debug);
+    }  
 }
