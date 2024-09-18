@@ -134,15 +134,18 @@ final class UserController
             'name' => $parsedBody['name'],
             'cpf' => UserHelper::cleanDocument($parsedBody['cpf']),
             'email' => $parsedBody['email'],            
-            'ra' => $parsedBody['ra'],
-            'role' => $parsedBody['role'],
-            'status' => $parsedBody['status'],
+            'ra' => $parsedBody['ra'],            
         ];
 
         if ($parsedBody['password'] != '') {
             $data += ['password' => password_hash($parsedBody['password'], PASSWORD_DEFAULT)];
         }
 
+        $data += [
+            'role' => $parsedBody['role'],
+            'status' => $parsedBody['status'],
+        ];
+        
         $user = new UserModel();    
         $user->data($data)
              ->where("id = {$id}")
