@@ -126,9 +126,11 @@ final class UserController
                   ->where("id = {$id}")
                   ->get();
         
-        if ($parsedBody['role'] < $user_role->result()->role) {
-            return ResponseController::message($response, 'error', 'Operation denied!'); 
-        }        
+        if ($user_role->result()->role != 1) {
+            if ($parsedBody['role'] < $user_role->result()->role) {
+                return ResponseController::message($response, 'error', 'Operation denied!'); 
+            }  
+        } 
 
         $data = [
             'name' => $parsedBody['name'],
