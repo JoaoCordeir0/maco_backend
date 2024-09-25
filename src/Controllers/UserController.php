@@ -128,7 +128,7 @@ final class UserController
                   ->where("id = {$_id}")
                   ->get();
         
-        if ($user_role->result()->role > 1) {
+        if ($user_role->result()->role != RoleModel::ADMIN) {
             if ($parsedBody['role'] < $user_role->result()->role) {
                 return ResponseController::message($response, 'error', 'Operation denied!'); 
             }  
