@@ -117,13 +117,15 @@ final class UserController
 
         $id = $parsedBody['id'];
 
+        $_id = UserHelper::getUserInToken($request, 'id');
+
         if (empty($id)) {                        
             return ResponseController::message($response, 'error', 'Missing information');         
         }
         
         $user_role = new UserModel();
         $user_role->select(['role'])
-                  ->where("id = {$id}")
+                  ->where("id = {$_id}")
                   ->get();
         
         if ($user_role->result()->role > 1) {
