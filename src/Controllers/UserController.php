@@ -74,7 +74,8 @@ final class UserController
         $email = $parsedBody['email'];
         $password = $parsedBody['password'];           
         $ra = $parsedBody['ra'];        
-        $course = $parsedBody['course'];           
+        $course = $parsedBody['course'];         
+        $role = RoleModel::AUTHOR;  
 
         if (empty($name) || empty($cpf) || empty($email) || empty($password) || empty($ra) || empty($course)) {                        
             return ResponseController::message($response, 'error', 'Missing information');         
@@ -84,6 +85,12 @@ final class UserController
             return ResponseController::message($response, 'error', 'Invalid email');                     
         }
 
+        if (UserHelper::checkUserRole($request, RoleModel::ADMIN)) {
+            if (!empty($parsedBody['role'])) {
+                $role = $parsedBody['role'];
+            }
+        }
+
         $user = new UserModel();    
         $user->data([
             'name' => $name,
@@ -91,7 +98,7 @@ final class UserController
             'email' => $email,
             'password' => password_hash($password, PASSWORD_DEFAULT),
             'ra' => $ra,
-            'role' => RoleModel::AUTHOR,
+            'role' => $role,
             'status' => 1,
         ])->insert();         
 
