@@ -43,13 +43,13 @@ class DocxService
 
             // Título
             $section->addText(strtoupper($article->title), $bold, $center);
-            $section->addLine();
+            $section->addTextBreak();
 
             // Autores
             foreach($article->authors as $author) {                
                 $section->addText($author['name'] . ' - ' . $author['email']);
             }  
-            $section->addLine();
+            $section->addTextBreak();
 
             // Orientadores / Co-orientadores            
             foreach($article->advisors as $advisor) {      
@@ -63,7 +63,7 @@ class DocxService
                     $textrun2->addText($advisor['name'] . ' - ' . $advisor['email']);
                 }                
             }  
-            $section->addLine();
+            $section->addTextBreak();
 
             // Curso
             $courses = [];
@@ -76,23 +76,23 @@ class DocxService
                 }                
             }  
             $textrun3->addText(implode(', ', $courses));
-            $section->addLine();
+            $section->addTextBreak();
 
             // Resumo
             $section->addText("Resumo:", $bold);
             $section->addText($article->summary, null, $both);
-            $section->addLine();
+            $section->addTextBreak();
 
             // Palavras chaves
             $section->addText("Palavras chaves:", $bold);
             $section->addText(trim(str_replace(';', ', ', $article->keywords)));
-            $section->addLine();
+            $section->addTextBreak();
 
             // Referências
             $section->addText("Referências:", $bold);
             foreach($article->references as $reference) {                
                 $section->addText($reference['reference']);
-                $section->addLine();
+                $section->addTextBreak();
             }            
             
             FileHelper::delFiles($this->path);
