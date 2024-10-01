@@ -61,6 +61,52 @@ final class UserController
     }  
 
     /**
+    * Admin realiza login em qualquer usuário
+    *    
+    * @return Response
+    */
+    public function loginAdmin(Request $request, Response $response, $args): Response
+    {        
+        $parsedBody = $request->getParsedBody();
+
+        if (UserHelper::checkUserRole($request, RoleModel::ADMIN)) {            
+            return ResponseController::message($response, 'error', 'Operation denied! User is not a admin');            
+        }
+
+        $user = $parsedBody['user'];        
+
+        if (empty($user)) {                        
+            return ResponseController::message($response, 'error', 'Missing information');         
+        }
+
+        $user = new UserModel();    
+        $user->select()        
+             ->where("id = '{$user}'")                                    
+             ->get();          
+
+        if (isset($user->result()->id))
+        {                   
+            $infoUser = array(
+                'id' => $user->getID(),
+                'name' => $user->getName(),
+                'email' => $user->getEmail(),
+                'ra' => $user->getRA(),    
+                'role' => UserHelper::formatUserRole($user->getRole()), 
+            );
+            
+            $data = (object) [
+                'status' => 'success',                     
+                'message' => 'User login success',                   
+                'token' => UserHelper::generateJWT($infoUser),   
+                'user' => $infoUser,                       
+            ];            
+
+            return ResponseController::data($response, $data);                         
+        }   
+        return ResponseController::message($response, 'error', 'User not found');                   
+    }  
+
+    /**
     * Realiza o cadastro de um usuário
     *    
     * @return Response
@@ -77,7 +123,7 @@ final class UserController
         $course = $parsedBody['course'];           
 
         if (empty($name) || empty($cpf) || empty($email) || empty($password) || empty($ra) || empty($course)) {                        
-            return ResponseController::message($response, 'error', 'Missing information');         
+            return ResponseController::message($response, 'error', '    ');         
         }
 
         if (! UserHelper::validateEmail($email)) {                         

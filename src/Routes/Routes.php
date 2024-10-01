@@ -17,6 +17,7 @@ $app->group('/public', function () use ($app) {
 
 $app->group('/user', function () use ($app) {
     $app->post('/user/login', [UserController::class, 'login']); // Login   
+    $app->post('/user/login/admin', [UserController::class, 'loginAdmin']); // Login admin
     $app->post('/user/register', [UserController::class, 'register']); // Register   
     $app->post('/user/edit', [UserController::class, 'edit']); // Edit   
     $app->post('/user/recoverpassword', [UserController::class, 'recoverPassword']); // Recover password
