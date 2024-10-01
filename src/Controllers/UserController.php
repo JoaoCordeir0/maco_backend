@@ -67,21 +67,21 @@ final class UserController
     */
     public function loginAdmin(Request $request, Response $response, $args): Response
     {        
-        $parsedBody = $request->getParsedBody();
+        $parsedBody = $request->getParsedBody();        
 
         if (UserHelper::checkUserRole($request, RoleModel::ADMIN)) {            
             return ResponseController::message($response, 'error', 'Operation denied! User is not a admin');            
         }
+        
+        $id = $parsedBody['user'];        
 
-        $user = $parsedBody['user'];        
-
-        if (empty($user)) {                        
+        if (empty($id)) {                        
             return ResponseController::message($response, 'error', 'Missing information');         
-        }
+        }        
 
         $user = new UserModel();    
         $user->select()        
-             ->where("id = '{$user}'")                                    
+             ->where("id = {$id}")
              ->get();          
 
         if (isset($user->result()->id))
