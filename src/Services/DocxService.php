@@ -30,10 +30,10 @@ class DocxService
 
             // Configs da página
             $section = $phpWord->addSection([
-                'marginLeft'   => 3.0 * 550,
-                'marginTop'    => 3.0 * 550,
-                'marginRight'  => 2.0 * 550,
-                'marginBottom' => 2.0 * 550,
+                'marginLeft'   => 3.0 * 567,
+                'marginTop'    => 3.0 * 567,
+                'marginRight'  => 2.0 * 567,
+                'marginBottom' => 2.0 * 567,
             ]);
             
             // Styles
