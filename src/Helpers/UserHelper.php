@@ -72,6 +72,9 @@ class UserHelper
         if (isset($params->user_id)) {
             return "{$condition} user.id = {$params->user_id}";   
         }
+        else if (isset($params->user_role) && isset($params->user_info)) {            
+            return "{$condition} user.role = {$params->user_role} and (user.name like '%{$params->user_info}%' or user.email like '%{$params->user_info}%' or user.ra like '%{$params->user_info}%')";   
+        }
         else if (isset($params->user_role)) {
             return "{$condition} user.role = {$params->user_role}";   
         }
