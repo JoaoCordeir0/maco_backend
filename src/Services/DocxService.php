@@ -43,13 +43,13 @@ class DocxService
 
             // Título
             $section->addText(strtoupper($article->title), $bold, $center);
-            $section->addTextBreak();
+            $section->addText('');
 
             // Autores
             foreach($article->authors as $author) {                
                 $section->addText($author['name'] . ' - ' . $author['email']);
             }  
-            $section->addTextBreak();
+            $section->addText('');
 
             // Orientadores / Co-orientadores            
             foreach($article->advisors as $advisor) {      
@@ -63,7 +63,7 @@ class DocxService
                     $textrun2->addText($advisor['name'] . ' - ' . $advisor['email']);
                 }                
             }  
-            $section->addTextBreak();
+            $section->addText('');
 
             // Curso
             $courses = [];
@@ -76,23 +76,23 @@ class DocxService
                 }                
             }  
             $textrun3->addText(implode(', ', $courses));
-            $section->addTextBreak();
+            $section->addText('');
 
             // Resumo
             $section->addText("Resumo:", $bold);
             $section->addText($article->summary, null, $both);
-            $section->addTextBreak();
+            $section->addText('');
 
             // Palavras chaves
             $section->addText("Palavras chaves:", $bold);
             $section->addText(trim(str_replace(';', ', ', $article->keywords)));
-            $section->addTextBreak();
+            $section->addText('');
 
             // Referências
             $section->addText("Referências:", $bold);
-            foreach($article->references as $reference) {                
-                $section->addText($reference['reference']);
-                $section->addTextBreak();
+            foreach($article->references as $reference) {          
+                $section->addText(htmlspecialchars($reference['reference']));
+                $section->addText('');
             }            
             
             FileHelper::delFiles($this->path);
