@@ -63,7 +63,7 @@ class DocxService
                     $textrun2->addText($advisor['name'] . ' - ' . $advisor['email']);
                 }                
             }  
-            $section->addText('');
+            //$section->addText('');
 
             // Curso
             $courses = [];
@@ -92,7 +92,7 @@ class DocxService
             $section->addText("Referências:", $bold);
             foreach($article->references as $reference) {          
                 $section->addText(htmlspecialchars($reference['reference']));
-                $section->addText('');
+                //$section->addText('');
             }            
             
             FileHelper::delFiles($this->path);
