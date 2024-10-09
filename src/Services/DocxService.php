@@ -85,13 +85,13 @@ class DocxService
 
             // Palavras chaves
             $section->addText("Palavras chaves:", $bold);
-            $section->addText(trim(str_replace(';', ', ', $article->keywords)), null, $both);
+            $section->addText(trim(str_replace(';', ', ', $article->keywords)));
             $section->addText('');
 
             // Referências
             $section->addText("Referências:", $bold);
             foreach($article->references as $reference) {          
-                $section->addText(htmlspecialchars($reference['reference']));
+                $section->addText(htmlspecialchars($reference['reference']), null, $both);
                 //$section->addText('');
             }            
             
