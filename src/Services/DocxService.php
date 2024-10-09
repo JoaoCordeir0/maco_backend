@@ -85,7 +85,7 @@ class DocxService
 
             // Palavras chaves
             $section->addText("Palavras chaves:", $bold);
-            $section->addText(trim(str_replace(';', ', ', $article->keywords)));
+            $section->addText(trim(str_replace(';', ', ', $article->keywords)), null, $both);
             $section->addText('');
 
             // Referências
