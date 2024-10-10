@@ -42,7 +42,7 @@ class DocxService
             $both = ['alignment' => 'both'];
 
             // Título
-            $section->addText(strtoupper($article->title), $bold, $center);
+            $section->addText(mb_strtoupper($article->title), $bold, $center);
             $section->addText('');
 
             // Autores
