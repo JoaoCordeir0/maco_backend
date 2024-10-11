@@ -34,7 +34,7 @@ final class UserController
 
         $user = new UserModel();    
         $user->select()        
-             ->where("email = '{$email}'")
+             ->where("email = '{$email}' and status = 1")
              ->limit(1)                        
              ->get();          
 
