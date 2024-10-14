@@ -136,6 +136,17 @@ final class ArticleController
             if ($status != 2) {
                 return ResponseController::message($response, 'error', 'Operation denied!');            
             }
+            $article_details = (array) ArticleHelper::getArticle("article.id = {$article}");              
+            $userID = UserHelper::getUserInToken($request, 'id');
+            $userInArticle = false;
+            foreach((array) $article_details[0]['authors'] as $author) {                
+                if ($userID == $author['id']) {
+                    $userInArticle = true;                    
+                }
+            }       
+            if (! $userInArticle) {
+                return ResponseController::message($response, 'error', 'User not in article');
+            }
         }
         // Revisor atualiza para o status 3 = in_correction e 4 = approved
         if (! UserHelper::checkUserRole($request, RoleModel::ADVISOR)) {            
@@ -173,7 +184,7 @@ final class ArticleController
                  ->get();          
                  
             $html = file_get_contents('./layout-email/status_update.html');
-            $html = str_replace('{{host}}', SystemHelper::getHost(), $html);    
+            $html = str_replace('{{host}}', SystemHelper::getFrontendHost(), $html);    
             $html = str_replace('{{user_name}}', $userInfo->getName(), $html);    
             $html = str_replace('{{article}}', $articleInfo->getTitle(), $html);
             $html = str_replace('{{status}}', ArticleHelper::getStatusFormated($status), $html);

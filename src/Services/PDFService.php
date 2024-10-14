@@ -6,6 +6,7 @@ use Dompdf\Dompdf;
 use Dompdf\Options;
 use MacoBackend\Helpers\FileHelper;
 use MacoBackend\Helpers\UserHelper;
+use MacoBackend\Helpers\SystemHelper;
 
 class PDFService
 {    
@@ -52,6 +53,8 @@ class PDFService
         setlocale(LC_TIME, 'pt_BR.UTF-8');                
 
         $html = file_get_contents('./layout-certificate/certificate.html');
+
+        $html = str_replace('{{host}}', SystemHelper::getBackendHost(), $html);    
 
         $html = str_replace('{{student}}', $data['authors']['name'], $html);
 

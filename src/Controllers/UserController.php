@@ -242,7 +242,7 @@ final class UserController
                       ->update();    
                  
             $html = file_get_contents('./layout-email/password_reset.html');
-            $html = str_replace('{{host}}', SystemHelper::getHost(), $html);    
+            $html = str_replace('{{host}}', SystemHelper::getFrontendHost(), $html);    
             $html = str_replace('{{user_name}}', $user->getName(), $html);                
             $html = str_replace('{{new_password}}', $new_pass, $html);
 

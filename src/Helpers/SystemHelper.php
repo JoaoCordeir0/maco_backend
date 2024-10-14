@@ -12,14 +12,26 @@ final class SystemHelper
     *    
     * @return void
     */
-    public static function getHost(): string
+    public static function getBackendHost(): string
     {        
         try {
-            $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
-            $host = $protocol . $_SERVER['HTTP_HOST'];
-            return $host;
+            return getenv('BACKEND_HOST');
         } catch(Exception $e) {            
             return "http://localhost:9090";
         }                                         
-    }       
+    }     
+    
+    /**
+    * Retorna o host que a aplicação esta rodando
+    *    
+    * @return void
+    */
+    public static function getFrontendHost(): string
+    {        
+        try {
+            return getenv('FRONTEND_HOST');
+        } catch(Exception $e) {            
+            return "http://localhost:3000";
+        }                                         
+    }     
 }
