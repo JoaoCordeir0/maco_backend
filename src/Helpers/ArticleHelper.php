@@ -151,4 +151,32 @@ class ArticleHelper
         }              
         return (object) $data;
     }
+
+    /**
+     * Função que retorna o status com base no ID
+     * 
+     * @param $id
+     */
+    public static function getStatusFormated($id): string
+    {
+        $status = '';
+        switch($id) {
+            case 1:
+                $status = 'Submissão';
+                break;
+            case 2: 
+                $status = 'Revisão';
+                break;
+            case 3: 
+                $status = 'Correção';
+                break;
+            case 4: 
+                $status = 'Aprovado';
+                break;                
+            case 5: 
+                $status = 'Finalizado';
+                break;
+        }
+        return $status;
+    }
 }

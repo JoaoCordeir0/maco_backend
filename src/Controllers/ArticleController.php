@@ -8,6 +8,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use MacoBackend\Helpers\ArticleHelper;
 use MacoBackend\Helpers\LogHelper;
 use MacoBackend\Helpers\UserHelper;
+use MacoBackend\Helpers\SystemHelper;
 use MacoBackend\Models\ArticleAdvisorsModel;
 use MacoBackend\Models\ArticleAuthorsModel;
 use MacoBackend\Models\ArticleCommentsModel;
@@ -15,7 +16,9 @@ use MacoBackend\Models\ArticleModel;
 use MacoBackend\Models\ArticleReferencesModel;
 use MacoBackend\Models\RoleModel;
 use MacoBackend\Models\UserCourseModel;
+use MacoBackend\Models\UserModel;
 use MacoBackend\Services\DocxService;
+use MacoBackend\Services\EmailService;
 
 final class ArticleController
 {
@@ -128,6 +131,19 @@ final class ArticleController
             return ResponseController::message($response, 'error', 'Missing information');            
         }
 
+        // Autor so atualiza para o status 2 = in_revision
+        if (! UserHelper::checkUserRole($request, RoleModel::AUTHOR)) {            
+            if ($status != 2) {
+                return ResponseController::message($response, 'error', 'Operation denied!');            
+            }
+        }
+        // Revisor atualiza para o status 3 = in_correction e 4 = approved
+        if (! UserHelper::checkUserRole($request, RoleModel::ADVISOR)) {            
+            if ($status != 3 && $status != 4) {
+                return ResponseController::message($response, 'error', 'Operation denied!');            
+            }
+        }
+
         $articleStatus = new ArticleModel();
         $articleStatus->data(['status' => $status])
                       ->where("id = {$article}")
@@ -135,9 +151,44 @@ final class ArticleController
                 
         LogHelper::log('Artigo', 'Edição de status de artigo', $request);
 
-        if ($articleStatus->result()->status != 'success') {            
+        if ($articleStatus->result()->status != 'success') {                        
             return ResponseController::message($response, 'error', $articleStatus->result()->message);                                   
         }
+
+        // Notifica os autores sobre a mudança de status            
+        $articleAuthors = new ArticleAuthorsModel();
+        $articleAuthors->select()                       
+                       ->where("article_authors.article = {$article}")                    
+                       ->get(true);
+
+        $articleInfo = new ArticleModel();
+        $articleInfo->select()                       
+                    ->where("article.id = {$article}")                    
+                    ->get();
+
+        foreach($articleAuthors->result() as $author) {     
+            $userInfo = new UserModel();
+            $userInfo->select()                       
+                 ->where("user.id = " . $author['user'])                    
+                 ->get();          
+                 
+            $html = file_get_contents('./layout-email/status_update.html');
+            $html = str_replace('{{host}}', SystemHelper::getHost(), $html);    
+            $html = str_replace('{{user_name}}', $userInfo->getName(), $html);    
+            $html = str_replace('{{article}}', $articleInfo->getTitle(), $html);
+            $html = str_replace('{{status}}', ArticleHelper::getStatusFormated($status), $html);
+            
+            $email = EmailService::sendMail(
+                'Alteração de status do seu artigo - MACO',
+                $html,
+                $userInfo->getEmail(),
+                $userInfo->getName(),
+            );
+            
+            // echo $html;
+            // var_dump($email);            
+        }         
+
         return ResponseController::message($response, $articleStatus->result()->status, 'Article status update successfully');
     }
 

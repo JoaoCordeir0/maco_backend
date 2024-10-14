@@ -8,6 +8,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use MacoBackend\Models\UserModel;
 use MacoBackend\Helpers\UserHelper;
+use MacoBackend\Helpers\SystemHelper;
 use MacoBackend\Models\RoleModel;
 use MacoBackend\Models\UserCourseModel;
 use MacoBackend\Helpers\LogHelper;
@@ -233,8 +234,27 @@ final class UserController
         {                       
             $lastname = array_reverse(explode(' ', $user->getName()))[0];
             $new_pass = UserHelper::generatePassword($lastname);     
+                        
+            $userEdit = new UserModel();    
+            $userEdit->data([
+                        'password' => password_hash($new_pass, PASSWORD_DEFAULT)               
+                    ])->where("id = " . $user->result()->id)
+                      ->update();    
+                 
+            $html = file_get_contents('./layout-email/password_reset.html');
+            $html = str_replace('{{host}}', SystemHelper::getHost(), $html);    
+            $html = str_replace('{{user_name}}', $user->getName(), $html);                
+            $html = str_replace('{{new_password}}', $new_pass, $html);
 
-            # EmailService::sendMail('title email', 'html email', $user->getEmail(), $user->getName());           
+            $emailService = EmailService::sendMail(
+                'Recuperação de senha - MACO', 
+                $html, 
+                $user->getEmail(), 
+                $user->getName()
+            );        
+            
+            // echo $html;
+            // var_dump($emailService);
         }  
 
         LogHelper::log('Usuário', 'Recuperação de senha', $request);

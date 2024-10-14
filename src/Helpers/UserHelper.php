@@ -185,7 +185,7 @@ class UserHelper
 
         $pass = substr(str_shuffle($chars), 0, 6);
             
-        $pass = $lastname . '.' . $pass;
+        $pass = $lastname . $pass;
 
         $pass = preg_replace("/[^a-zA-Z0-9\-_.!*'()\/]/", "", $pass);
 

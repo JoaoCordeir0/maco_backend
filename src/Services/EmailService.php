@@ -16,6 +16,8 @@ class EmailService
      */
     public static function sendMail(string $title, string $html, string $address, string $name) {
         try {
+            throw new Exception('SMPT not configured');
+
             $mail = new PHPMailer;
 
             $mail->isSMTP();
