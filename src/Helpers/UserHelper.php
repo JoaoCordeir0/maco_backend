@@ -192,6 +192,9 @@ class UserHelper
         return $pass;
     }
 
+    /**
+     * Função para pegar as iniciais do nome
+     */
     public static function getInitialsOfName($name): string 
     {
         $name = explode(' ', $name);
@@ -202,5 +205,14 @@ class UserHelper
         }
         
         return $initials;
+    }
+
+    /**
+     * Função para pegar a data de expiração do token
+     */
+    public static function getTokenExpiresDate()
+    {
+        date_default_timezone_set('America/Sao_Paulo');
+        return date('Y-m-d H:i:s' , strtotime('+5 hours'));
     }
 }
