@@ -99,7 +99,8 @@ final class UserController
             $data = (object) [
                 'status' => 'success',                     
                 'message' => 'User login success',                   
-                'token' => UserHelper::generateJWT($infoUser),   
+                'token' => UserHelper::generateJWT($infoUser), 
+                'token_expires' => UserHelper::getTokenExpiresDate(),   
                 'user' => $infoUser,                       
             ];            
 
