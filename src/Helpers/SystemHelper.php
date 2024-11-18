@@ -10,7 +10,7 @@ final class SystemHelper
     /**
     * Retorna o host que a aplicação esta rodando
     *    
-    * @return void
+    * @return string
     */
     public static function getBackendHost(): string
     {        
@@ -24,7 +24,7 @@ final class SystemHelper
     /**
     * Retorna o host que a aplicação esta rodando
     *    
-    * @return void
+    * @return string
     */
     public static function getFrontendHost(): string
     {        

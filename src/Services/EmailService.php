@@ -16,14 +16,12 @@ class EmailService
      */
     public static function sendMail(string $title, string $html, string $address, string $name) {
         try {
-            throw new Exception('SMPT not configured');
-
             $mail = new PHPMailer;
 
             $mail->isSMTP();
             $mail->SMTPDebug = 0;
-            $mail->Host = 'email-ssl.com.br'; // Locaweb
-            $mail->Port = 587;
+            $mail->Host = getenv('EMAIL_HOST');
+            $mail->Port = getenv('EMAIL_PORT');
             $mail->SMTPAuth = true;
             $mail->Username = getenv('EMAIL_USER');
             $mail->Password = getenv('EMAIL_PASSWORD');
@@ -40,6 +38,7 @@ class EmailService
 
             return [
                 'status' => 'success',
+                'a' => getenv('EMAIL_USER'),
                 'message' => 'Email successfully sent',
             ];
         } catch(Exception $e) {
